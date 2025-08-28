@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Status {
+  ENABLED
+  PAUSED
+  REMOVED
+}
+
+model Campaign {
+  id     Int    @id @default(autoincrement())
+  name   String @unique
+  status Status
+  adGroups AdGroup[]
+}
+
+model AdGroup {
+  id         Int    @id @default(autoincrement())
+  name       String
+  campaignId Int
+  status     Status
+  campaign   Campaign @relation(fields: [campaignId], references: [id])
+  keywords   KeywordQuality[]
+}
+
+model KeywordQuality {
+  id        Int      @id @default(autoincrement())
+  keyword   String
+  date      DateTime @db.Date
+  qs        Int
+  adGroupId Int
+  adGroup   AdGroup  @relation(fields: [adGroupId], references: [id])
+
+  @@unique([adGroupId, keyword, date])
+}
