@@ -26,10 +26,10 @@ model AdGroup {
   campaignId BigInt
   status     Status
   campaign   Campaign @relation(fields: [campaignId], references: [id])
-  keywords   KeywordQuality[]
+  keywords   Keyword[]
 }
 
-model KeywordQuality {
+model Keyword {
   criterionId BigInt  @id
   keyword     String
   date        DateTime @db.Date
