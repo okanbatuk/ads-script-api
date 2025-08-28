@@ -14,28 +14,28 @@ enum Status {
 }
 
 model Campaign {
-  id     Int    @id @default(autoincrement())
+  id     BigInt @id
   name   String @unique
   status Status
   adGroups AdGroup[]
 }
 
 model AdGroup {
-  id         Int    @id @default(autoincrement())
+  id         BigInt @id
   name       String
-  campaignId Int
+  campaignId BigInt
   status     Status
   campaign   Campaign @relation(fields: [campaignId], references: [id])
   keywords   KeywordQuality[]
 }
 
 model KeywordQuality {
-  id        Int      @id @default(autoincrement())
-  keyword   String
-  date      DateTime @db.Date
-  qs        Int
-  adGroupId Int
-  adGroup   AdGroup  @relation(fields: [adGroupId], references: [id])
+  criterionId BigInt  @id
+  keyword     String
+  date        DateTime @db.Date
+  qs          Int
+  adGroupId   BigInt
+  adGroup     AdGroup  @relation(fields: [adGroupId], references: [id])
 
-  @@unique([adGroupId, keyword, date])
+  @@unique([criterionId, date])
 }
