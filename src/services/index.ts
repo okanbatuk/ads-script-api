@@ -1,3 +1,3 @@
-export * from "./ad-group.service";
-export * from "./campaign.service";
-export * from "./keyword.service";
+export * from "./ad-group.service.js";
+export * from "./campaign.service.js";
+export * from "./keyword.service.js";

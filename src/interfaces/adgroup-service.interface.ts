@@ -1,5 +1,5 @@
-import type { AdGroupDto } from "../dtos";
-import type { AdGroup } from "../models/prisma";
+import type { AdGroupDto } from "../dtos/index.js";
+import type { AdGroup } from "../models/prisma.js";
 
 export interface IAdGroupService {
   getAll(id: string): Promise<AdGroup[]>;

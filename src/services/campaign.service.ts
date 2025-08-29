@@ -1,8 +1,8 @@
 import { inject, injectable } from "inversify";
-import { TYPES } from "../types";
-import type { CampaignDto } from "../dtos";
-import type { ICampaignService } from "../interfaces";
-import { type Campaign, PrismaClient, Status } from "../models/prisma";
+import { TYPES } from "../types/index.js";
+import type { CampaignDto } from "../dtos/index.js";
+import type { ICampaignService } from "../interfaces/index.js";
+import { type Campaign, PrismaClient, type Status } from "../models/prisma.js";
 
 @injectable()
 export class CampaignService implements ICampaignService {

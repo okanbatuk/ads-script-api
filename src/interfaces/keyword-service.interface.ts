@@ -1,5 +1,5 @@
-import type { KeywordDto } from "../dtos";
-import type { Keyword } from "../models/prisma";
+import type { KeywordDto } from "../dtos/index.js";
+import type { Keyword } from "../models/prisma.js";
 
 export interface IKeywordService {
   getAll(id: string): Promise<Keyword[]>;

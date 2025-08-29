@@ -4,11 +4,19 @@ import {
   AdGroupController,
   CampaignController,
   KeywordController,
-} from "../controllers";
-import { TYPES } from "../types";
-import { prisma } from "../models/prisma";
-import { CampaignService, KeywordService } from "../services";
-import type { ICampaignService, IKeywordService } from "../interfaces";
+} from "../controllers/index.js";
+import { TYPES } from "../types/index.js";
+import { prisma } from "../models/prisma.js";
+import {
+  CampaignService,
+  AdGroupService,
+  KeywordService,
+} from "../services/index.js";
+import type {
+  ICampaignService,
+  IAdGroupService,
+  IKeywordService,
+} from "../interfaces/index.js";
 
 export const container = new Container();
 
@@ -16,6 +24,10 @@ container.bind<PrismaClient>(TYPES.PrismaClient).toConstantValue(prisma);
 container
   .bind<ICampaignService>(TYPES.CampaignService)
   .to(CampaignService)
+  .inSingletonScope();
+container
+  .bind<IAdGroupService>(TYPES.AdGroupService)
+  .to(AdGroupService)
   .inSingletonScope();
 container
   .bind<IKeywordService>(TYPES.KeywordService)

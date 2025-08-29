@@ -1,8 +1,8 @@
 import { inject, injectable } from "inversify";
-import { TYPES } from "../types";
-import type { KeywordDto } from "../dtos";
-import type { IKeywordService } from "../interfaces";
-import { PrismaClient, type Keyword } from "../models/prisma";
+import { TYPES } from "../types/index.js";
+import type { KeywordDto } from "../dtos/index.js";
+import type { IKeywordService } from "../interfaces/index.js";
+import { PrismaClient, type Keyword } from "../models/prisma.js";
 
 @injectable()
 export class KeywordService implements IKeywordService {

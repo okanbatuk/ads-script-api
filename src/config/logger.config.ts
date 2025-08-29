@@ -1,5 +1,5 @@
 import pinoHttp from "pino-http";
-import { config } from "./env.config.ts";
+import { config } from "./env.config.js";
 
 export const logger = pinoHttp({
   level: "info",

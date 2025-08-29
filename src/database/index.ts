@@ -1,4 +1,4 @@
-import { prisma } from "../models/prisma";
+import { prisma } from "../models/prisma.js";
 
 export abstract class Database {
   public static async connectDB(): Promise<void> {

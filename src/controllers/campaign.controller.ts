@@ -1,8 +1,8 @@
 import { inject, injectable } from "inversify";
 import { Request, Response } from "express";
-import type { ICampaignService } from "../interfaces";
-import { TYPES } from "../types/inversify.types";
-import { sendResponse } from "../utils/send-response";
+import { TYPES } from "../types/index.js";
+import { sendResponse } from "../utils/index.js";
+import type { ICampaignService } from "../interfaces/index.js";
 
 @injectable()
 export class CampaignController {

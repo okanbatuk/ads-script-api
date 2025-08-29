@@ -1,3 +1,3 @@
-export * from "./campaign.controller";
-export * from "./ad-group.controller";
-export * from "./keyword.controller";
+export * from "./campaign.controller.js";
+export * from "./ad-group.controller.js";
+export * from "./keyword.controller.js";

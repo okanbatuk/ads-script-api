@@ -1,3 +1,3 @@
-export * from "./adgroup-service.interface";
-export * from "./campaign-service.interface";
-export * from "./keyword-service.interface";
+export * from "./adgroup-service.interface.js";
+export * from "./campaign-service.interface.js";
+export * from "./keyword-service.interface.js";

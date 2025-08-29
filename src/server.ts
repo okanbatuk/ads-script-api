@@ -1,7 +1,7 @@
-import { buildApp } from "./app";
-import { config } from "./config";
-import { Database } from "./database";
-import { gracefulShutdown } from "./utils/shutdown";
+import { buildApp } from "./app.js";
+import { config } from "./config/index.js";
+import { Database } from "./database/index.js";
+import { gracefulShutdown } from "./utils/index.js";
 
 (async () => {
   const app = await buildApp();

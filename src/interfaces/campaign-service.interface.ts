@@ -1,5 +1,5 @@
-import type { CampaignDto } from "../dtos";
-import type { Campaign } from "../models/prisma";
+import type { CampaignDto } from "../dtos/index.js";
+import type { Campaign } from "../models/prisma.js";
 
 export interface ICampaignService {
   getAll(): Promise<Campaign[]>;

@@ -1,8 +1,8 @@
 import { inject, injectable } from "inversify";
 import { Request, Response } from "express";
-import type { IKeywordService } from "../interfaces";
-import { TYPES } from "../types/inversify.types";
-import { sendResponse } from "../utils/send-response";
+import { TYPES } from "../types/index.js";
+import { sendResponse } from "../utils/index.js";
+import type { IKeywordService } from "../interfaces/index.js";
 
 @injectable()
 export class KeywordController {

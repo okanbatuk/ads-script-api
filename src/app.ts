@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import express from "express";
-import router from "./routes";
-import { logger } from "./config";
+import router from "./routes.js";
+import { logger } from "./config/index.js";
 
 export async function buildApp() {
   const app = express();

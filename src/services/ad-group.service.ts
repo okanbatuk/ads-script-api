@@ -1,8 +1,8 @@
 import { inject, injectable } from "inversify";
-import { TYPES } from "../types";
-import type { AdGroupDto } from "../dtos";
-import type { IAdGroupService } from "../interfaces";
-import { type AdGroup, PrismaClient, type Status } from "../models/prisma";
+import { TYPES } from "../types/index.js";
+import type { AdGroupDto } from "../dtos/index.js";
+import type { IAdGroupService } from "../interfaces/index.js";
+import { type AdGroup, PrismaClient, type Status } from "../models/prisma.js";
 
 @injectable()
 export class AdGroupService implements IAdGroupService {

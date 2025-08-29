@@ -3,11 +3,11 @@ import {
   CampaignController,
   AdGroupController,
   KeywordController,
-} from "./controllers";
-import { container } from "./container/container";
-import { TYPES } from "./types";
-import { sendResponse } from "./utils/send-response";
-import { Database } from "./database";
+} from "./controllers/index.js";
+import { TYPES } from "./types/index.js";
+import { Database } from "./database/index.js";
+import { sendResponse } from "./utils/index.js";
+import { container } from "./container/container.js";
 
 const router = Router();
 
