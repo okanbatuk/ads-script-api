@@ -12,7 +12,7 @@
         "pino": "^9.9.0",
         "pino-http": "^10.5.0",
         "prisma": "^6.15.0",
-        "reflect-metadata": "^0.2.2"
+        "reflect-metadata": "^0.2.2",
       },
       "devDependencies": {
         "@types/bun": "latest",
@@ -21,12 +21,12 @@
         "esbuild": "^0.25.9",
         "esbuild-register": "^3.6.0",
         "nodemon": "^3.1.10",
-        "pino-pretty": "^13.1.1"
+        "pino-pretty": "^13.1.1",
       },
       "peerDependencies": {
-        "typescript": "^5.9.2"
-      }
-    }
+        "typescript": "^5.9.2",
+      },
+    },
   },
   "packages": {
     "@esbuild/aix-ppc64": ["@esbuild/aix-ppc64@0.25.9", "", { "os": "aix", "cpu": "ppc64" }, "sha512-OaGtL73Jck6pBKjNIe24BnFE6agGl+6KxDtTfHhy1HmhthfKouEcOhqpSL64K4/0WCtbKFLOdzD/44cJ4k9opA=="],
@@ -453,6 +453,6 @@
 
     "http-errors/statuses": ["statuses@2.0.1", "", {}, "sha512-RwNA9Z/7PrK06rYLIzFMlaF+l73iwpzsqRIFgbMLbTcLD6cOao82TaWefPXQvB2fOC4AjuYSEndS7N/mTCbkdQ=="],
 
-    "c12/chokidar/readdirp": ["readdirp@4.1.2", "", {}, "sha512-GDhwkLfywWL2s6vEjyhri+eXmfH6j1L7JE27WhqLeYzoh/A3DBaYGEj2H/HFZCn/kMfim73FXxEJTw06WtxQwg=="]
+    "c12/chokidar/readdirp": ["readdirp@4.1.2", "", {}, "sha512-GDhwkLfywWL2s6vEjyhri+eXmfH6j1L7JE27WhqLeYzoh/A3DBaYGEj2H/HFZCn/kMfim73FXxEJTw06WtxQwg=="],
   }
 }
