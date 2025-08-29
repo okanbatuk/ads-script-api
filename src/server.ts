@@ -3,6 +3,8 @@ import { config } from "./config/index.js";
 import { Database } from "./database/index.js";
 import { gracefulShutdown } from "./utils/index.js";
 
+const PORT = process.env.PORT || config.port;
+
 (async () => {
   const app = await buildApp();
   try {
@@ -11,8 +13,8 @@ import { gracefulShutdown } from "./utils/index.js";
     // Handlers for close the server and db
     gracefulShutdown();
 
-    app.listen(config.port);
-    console.log(`🚀  Server ready at http://localhost:${config.port}`);
+    app.listen(PORT);
+    console.log(`🚀  Server ready at http://localhost:${PORT}`);
   } catch (err) {
     console.error(err);
     process.exit(1);
