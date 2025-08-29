@@ -5,18 +5,17 @@ import { gracefulShutdown } from "./utils/index.js";
 
 const PORT = process.env.PORT || config.port;
 
-(async () => {
-  const app = await buildApp();
-  try {
-    await Database.connectDB();
+await Database.connectDB();
+const app = await buildApp();
 
-    // Handlers for close the server and db
-    gracefulShutdown();
+// Handler export for Vercel
+export default app;
 
-    app.listen(PORT);
-    console.log(`🚀  Server ready at http://localhost:${PORT}`);
-  } catch (err) {
-    console.error(err);
-    process.exit(1);
-  }
-})();
+// Local development
+if (process.env.NODE_ENV !== "production") {
+  const PORT = process.env.PORT || config.port;
+  gracefulShutdown();
+  app.listen(PORT, () => {
+    console.log(`🚀 Server ready at http://localhost:${PORT}`);
+  });
+}
