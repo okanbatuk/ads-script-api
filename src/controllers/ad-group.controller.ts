@@ -1,0 +1,35 @@
+import { inject, injectable } from "inversify";
+import { Request, Response } from "express";
+import { TYPES } from "../types/inversify.types";
+import type { IAdGroupService } from "../interfaces";
+import { sendResponse } from "../utils/send-response";
+
+@injectable()
+export class AdGroupController {
+  constructor(
+    @inject(TYPES.AdGroupService) private readonly service: IAdGroupService,
+  ) {}
+
+  getAdGroupsByCampaign = async (
+    req: Request,
+    res: Response,
+  ): Promise<Response> => {
+    const result = await this.service.getAll(req.params.id);
+    return sendResponse(
+      res,
+      200,
+      result,
+      "All AdGroups successfully retrieved.",
+    );
+  };
+
+  upsert = async (req: Request, res: Response): Promise<Response> => {
+    await this.service.upsert(req.body);
+    return sendResponse(
+      res,
+      201,
+      undefined,
+      "AdGroups created successfully retrieved.",
+    );
+  };
+}

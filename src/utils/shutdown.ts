@@ -1,4 +1,4 @@
-import { Database } from "../database/index.ts";
+import { Database } from "../database";
 
 const state = { handled: false };
 
