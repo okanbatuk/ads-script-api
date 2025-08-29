@@ -1,5 +1,5 @@
-import dotenv from "dotenv";
-dotenv.config();
+import dotenvSafe from "dotenv-safe";
+dotenvSafe.config();
 
 export const config = {
   uri: process.env.MONGO_URI,
