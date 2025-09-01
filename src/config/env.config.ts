@@ -1,8 +1,9 @@
 import dotenvSafe from "dotenv-safe";
-dotenvSafe.config();
+
+if (process.env.NODE_ENV !== "production") dotenvSafe.config();
 
 export const config = {
-  uri: process.env.MONGO_URI,
+  db: process.env.DATABASE_URL,
   port: process.env.PORT || 3000,
   env: process.env.NODE_ENV,
 };

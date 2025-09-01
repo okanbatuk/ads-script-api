@@ -1,16 +1,19 @@
 {
   "name": "ads-api",
-  "module": "index.ts",
   "type": "module",
+  "main": "api/index.js",
   "private": true,
   "scripts": {
     "dev": "nodemon --exec node --import=esbuild-register src/server.ts",
     "build": "node builder.js",
-    "start": "node dist/server.js",
+    "start": "node .vercel/output/functions/index.func/index.js",
+    "postinstall": "bun run build && bun run db:generate",
     "db:generate": "prisma generate --schema=src/database/schema.prisma",
     "db:migrate": "prisma migrate dev --schema=src/database/schema.prisma",
-    "db:push": "prisma db push --schema=src/database/schema.prisma",
-    "vercel-build": "bun run build && bun run db:generate"
+    "db:push": "prisma db push --schema=src/database/schema.prisma"
+  },
+  "engines": {
+    "node": "20.x"
   },
   "devDependencies": {
     "@types/bun": "latest",

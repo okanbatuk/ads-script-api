@@ -2,6 +2,15 @@ import esbuild from "esbuild";
 import { join, dirname } from "path";
 import { copyFileSync, mkdirSync, existsSync } from "fs";
 
+const outDir = join(
+  process.cwd(),
+  ".vercel",
+  "output",
+  "functions",
+  "index.func",
+);
+if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true });
+
 // Main build
 await esbuild.build({
   entryPoints: ["src/server.ts"],
@@ -9,7 +18,7 @@ await esbuild.build({
   platform: "node",
   target: "node20",
   format: "esm",
-  outdir: "dist",
+  outfile: join(outDir, "index.js"),
   sourcemap: true,
   packages: "external",
 });
@@ -17,19 +26,12 @@ await esbuild.build({
 // Copy required files
 (() => {
   // Prisma schema
-  const prismaDir = join(process.cwd(), "dist", "database");
+  const prismaDir = join(outDir, "database");
   if (!existsSync(prismaDir)) mkdirSync(prismaDir, { recursive: true });
   copyFileSync(
     join(process.cwd(), "src", "database", "schema.prisma"),
     join(prismaDir, "schema.prisma"),
   );
 
-  // Routes file
-  const routesSrc = join(process.cwd(), "src", "routes.ts");
-  const routesDest = join(process.cwd(), "dist", "routes.js");
-  if (existsSync(routesSrc)) {
-    copyFileSync(routesSrc, routesDest);
-  }
-
-  console.log("✅ Build complete - all files copied to dist/");
+  console.log("✅ Build complete - all files copied to .vercel/");
 })();

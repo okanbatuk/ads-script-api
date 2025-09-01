@@ -4,6 +4,8 @@ node_modules
 # output
 out
 dist
+.vercel
+.vercel/*
 *.tgz
 
 # code coverage
