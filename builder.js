@@ -25,7 +25,7 @@ await esbuild.build({
   );
 
   // Routes file
-  const routesSrc = join(process.cwd(), "src", "routes.js");
+  const routesSrc = join(process.cwd(), "src", "routes.ts");
   const routesDest = join(process.cwd(), "dist", "routes.js");
   if (existsSync(routesSrc)) {
     copyFileSync(routesSrc, routesDest);

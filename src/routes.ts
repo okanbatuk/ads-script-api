@@ -16,9 +16,6 @@ const adgrpCtrl = container.get<AdGroupController>(TYPES.AdGroupController);
 const kwCtrl = container.get<KeywordController>(TYPES.KeywordController);
 
 router
-  .all("/", (req: Request, res: Response) => {
-    return sendResponse(res, 200, undefined, "Ads API working on Vercel!");
-  })
   .get("/health", async (req: Request, res: Response): Promise<Response> => {
     const isHealthy = await Database.healthCheck();
 
