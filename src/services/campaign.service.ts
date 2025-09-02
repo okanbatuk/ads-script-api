@@ -15,8 +15,6 @@ export class CampaignService implements ICampaignService {
     return this.prisma.campaign.findMany();
   };
   upsert = async (rows: CampaignDto[]): Promise<void> => {
-    console.log(`Campaign Rows:`);
-    console.log(rows);
     if (!Array.isArray(rows)) throw new ApiError("Campaigns must be an array.");
     const campaigns: Campaign[] = rows.map((r: CampaignDto) => ({
       id: BigInt(r.id),

@@ -38,5 +38,5 @@ model Keyword {
   adGroupId   BigInt
   adGroup     AdGroup  @relation(fields: [adGroupId], references: [id])
 
-  @@unique([keyword, date, adGroupId])
+  @@unique([criterionId, date, adGroupId])
 }

@@ -26,7 +26,6 @@ export class AdGroupController {
 
   upsert = async (req: Request, res: Response): Promise<Response> => {
     console.log(`------- UPSERT Ad Groups --------`);
-    console.log(`Req body --> ${req.body}`);
     await this.service.upsert(req.body);
     return sendResponse(
       res,

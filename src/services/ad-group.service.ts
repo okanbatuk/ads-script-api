@@ -20,8 +20,6 @@ export class AdGroupService implements IAdGroupService {
   };
 
   upsert = async (rows: AdGroupDto[]): Promise<void> => {
-    console.log(`AdGroup Rows: `);
-    console.log(rows);
     if (!Array.isArray(rows)) throw new ApiError("Ad Groups must be an array.");
     const adGroups: AdGroup[] = rows.map((r: AdGroupDto) => ({
       id: BigInt(r.id),
