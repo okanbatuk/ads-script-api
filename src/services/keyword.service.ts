@@ -20,12 +20,13 @@ export class KeywordService implements IKeywordService {
   upsert = async (rows: KeywordDto[]): Promise<void> => {
     console.log(`Keyword Rows: `);
     console.log(rows);
-    if (!Array.isArray(rows)) throw new ApiError("Campaigns must be an array.");
+    if (!Array.isArray(rows)) throw new ApiError("Keywords must be an array.");
+    if (rows.length === 0) return;
     const keywords: Keyword[] = rows.map((r: KeywordDto) => ({
       criterionId: BigInt(r.criterionId),
       keyword: r.keyword,
       date: new Date(r.date),
-      qs: Number(r.qs),
+      qs: r.qs ? Number(r.qs) : null,
       adGroupId: BigInt(r.adGroupId),
     }));
     await this.prisma.$transaction(

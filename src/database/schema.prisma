@@ -33,7 +33,7 @@ model Keyword {
   criterionId BigInt  @id
   keyword     String
   date        DateTime @db.Date
-  qs          Int
+  qs          Int?
   adGroupId   BigInt
   adGroup     AdGroup  @relation(fields: [adGroupId], references: [id])
 
