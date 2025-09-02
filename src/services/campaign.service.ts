@@ -1,5 +1,6 @@
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types/index.js";
+import { ApiError } from "../errors/api.error.js";
 import type { CampaignDto } from "../dtos/index.js";
 import type { ICampaignService } from "../interfaces/index.js";
 import { type Campaign, PrismaClient, type Status } from "../models/prisma.js";
@@ -14,6 +15,9 @@ export class CampaignService implements ICampaignService {
     return this.prisma.campaign.findMany();
   };
   upsert = async (rows: CampaignDto[]): Promise<void> => {
+    console.log(`Campaign Rows:`);
+    console.log(rows);
+    if (!Array.isArray(rows)) throw new ApiError("Campaigns must be an array.");
     const campaigns: Campaign[] = rows.map((r: CampaignDto) => ({
       id: BigInt(r.id),
       name: r.name,

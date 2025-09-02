@@ -1,4 +1,4 @@
-import { Router, Request, Response } from "express";
+import { Router, Request, Response, NextFunction } from "express";
 import {
   CampaignController,
   AdGroupController,
@@ -7,6 +7,7 @@ import {
 import { TYPES } from "./types/index.js";
 import { Database } from "./database/index.js";
 import { sendResponse } from "./utils/index.js";
+import { ApiError } from "./errors/api.error.js";
 import { container } from "./container/container.js";
 
 const router = Router();
@@ -16,6 +17,13 @@ const adgrpCtrl = container.get<AdGroupController>(TYPES.AdGroupController);
 const kwCtrl = container.get<KeywordController>(TYPES.KeywordController);
 
 router
+  .get("/error", async (_req: Request, _res: Response, next: NextFunction) => {
+    try {
+      throw new ApiError("This is an test error", 400);
+    } catch (error) {
+      next(error);
+    }
+  })
   .get("/health", async (req: Request, res: Response): Promise<Response> => {
     const isHealthy = await Database.healthCheck();
 

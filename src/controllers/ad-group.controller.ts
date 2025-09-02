@@ -14,6 +14,7 @@ export class AdGroupController {
     req: Request,
     res: Response,
   ): Promise<Response> => {
+    console.log(`------- GET Ad Groups By Campaign --------`);
     const result = await this.service.getAll(req.params.id);
     return sendResponse(
       res,
@@ -24,6 +25,8 @@ export class AdGroupController {
   };
 
   upsert = async (req: Request, res: Response): Promise<Response> => {
+    console.log(`------- UPSERT Ad Groups --------`);
+    console.log(`Req body --> ${req.body}`);
     await this.service.upsert(req.body);
     return sendResponse(
       res,

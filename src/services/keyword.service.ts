@@ -1,5 +1,6 @@
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types/index.js";
+import { ApiError } from "../errors/api.error.js";
 import type { KeywordDto } from "../dtos/index.js";
 import type { IKeywordService } from "../interfaces/index.js";
 import { PrismaClient, type Keyword } from "../models/prisma.js";
@@ -17,6 +18,9 @@ export class KeywordService implements IKeywordService {
     });
   }
   upsert = async (rows: KeywordDto[]): Promise<void> => {
+    console.log(`Keyword Rows: `);
+    console.log(rows);
+    if (!Array.isArray(rows)) throw new ApiError("Campaigns must be an array.");
     const keywords: Keyword[] = rows.map((r: KeywordDto) => ({
       criterionId: BigInt(r.criterionId),
       keyword: r.keyword,

@@ -1,5 +1,6 @@
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types/index.js";
+import { ApiError } from "../errors/api.error.js";
 import type { AdGroupDto } from "../dtos/index.js";
 import type { IAdGroupService } from "../interfaces/index.js";
 import { type AdGroup, PrismaClient, type Status } from "../models/prisma.js";
@@ -19,6 +20,9 @@ export class AdGroupService implements IAdGroupService {
   };
 
   upsert = async (rows: AdGroupDto[]): Promise<void> => {
+    console.log(`AdGroup Rows: `);
+    console.log(rows);
+    if (!Array.isArray(rows)) throw new ApiError("Campaigns must be an array.");
     const adGroups: AdGroup[] = rows.map((r: AdGroupDto) => ({
       id: BigInt(r.id),
       name: r.name,

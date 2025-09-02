@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { TYPES } from "../types/index.js";
 import { sendResponse } from "../utils/index.js";
 import type { ICampaignService } from "../interfaces/index.js";
+import { logger } from "../config/logger.config.js";
 
 @injectable()
 export class CampaignController {
@@ -12,6 +13,7 @@ export class CampaignController {
 
   // GET /campaign
   getAll = async (req: Request, res: Response): Promise<Response> => {
+    console.log(`------- GET ALL Campaigns --------`);
     const result = await this.service.getAll();
     return sendResponse(
       res,
@@ -23,6 +25,8 @@ export class CampaignController {
 
   // POST /campaign
   upsert = async (req: Request, res: Response): Promise<Response> => {
+    console.log(`------- UPSERT Campaigns --------`);
+    console.log(`Req body --> ${req.body}`);
     await this.service.upsert(req.body);
     return sendResponse(
       res,

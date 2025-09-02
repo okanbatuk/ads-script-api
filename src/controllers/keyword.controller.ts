@@ -14,6 +14,7 @@ export class KeywordController {
     req: Request,
     res: Response,
   ): Promise<Response> => {
+    console.log(`------- GET Keywords By Ad Group --------`);
     const result = await this.service.getAll(req.params.id);
     return sendResponse(
       res,
@@ -24,6 +25,8 @@ export class KeywordController {
   };
 
   upsert = async (req: Request, res: Response): Promise<Response> => {
+    console.log(`------- UPSERT Campaigns --------`);
+    console.log(`Req body --> ${req.body}`);
     await this.service.upsert(req.body);
     return sendResponse(
       res,
