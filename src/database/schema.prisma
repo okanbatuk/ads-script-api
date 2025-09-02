@@ -30,12 +30,13 @@ model AdGroup {
 }
 
 model Keyword {
-  criterionId BigInt  @id
+  id          Int     @id @default(autoincrement())
+  criterionId BigInt
   keyword     String
   date        DateTime @db.Date
   qs          Int?
   adGroupId   BigInt
   adGroup     AdGroup  @relation(fields: [adGroupId], references: [id])
 
-  @@unique([criterionId, date])
+  @@unique([keyword, date, adGroupId])
 }
