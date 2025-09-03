@@ -24,6 +24,16 @@ export class KeywordController {
     );
   };
 
+  getLastDate = async (req: Request, res: Response): Promise<Response> => {
+    const result = await this.service.getLastDate(req.params.id);
+    return sendResponse(
+      res,
+      200,
+      { date: result },
+      "Date information of the last added keywords has been retrieved.",
+    );
+  };
+
   upsert = async (req: Request, res: Response): Promise<Response> => {
     console.log(`------- UPSERT Campaigns --------`);
     await this.service.upsert(req.body);

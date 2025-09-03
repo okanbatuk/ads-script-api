@@ -14,6 +14,11 @@ export class CampaignService implements ICampaignService {
   getAll = async (): Promise<Campaign[]> => {
     return this.prisma.campaign.findMany();
   };
+
+  getCount = async (): Promise<number> => {
+    return this.prisma.campaign.count();
+  };
+
   upsert = async (rows: CampaignDto[]): Promise<void> => {
     if (!Array.isArray(rows)) throw new ApiError("Campaigns must be an array.");
     const campaigns: Campaign[] = rows.map((r: CampaignDto) => ({

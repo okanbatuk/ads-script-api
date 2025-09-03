@@ -32,8 +32,11 @@ router
       : sendResponse(res, 503, undefined, "Failed!");
   })
   .get("/campaign", cmpgnCtrl.getAll)
+  .get("/campaign/count", cmpgnCtrl.getCampaignCount)
   .get("/adgroup/:id", adgrpCtrl.getAdGroupsByCampaign)
+  .get("/adgroup/:id/count", adgrpCtrl.getAdGroupCount)
   .get("/keyword/:id", kwCtrl.getKeywordsByAdGroup)
+  .get("/keyword/:id/date", kwCtrl.getLastDate)
   .post("/campaign", cmpgnCtrl.upsert)
   .post("/adgroup", adgrpCtrl.upsert)
   .post("/keyword", kwCtrl.upsert);

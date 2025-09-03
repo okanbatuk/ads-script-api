@@ -10,6 +10,7 @@ export class KeywordService implements IKeywordService {
   constructor(
     @inject(TYPES.PrismaClient) private readonly prisma: PrismaClient,
   ) {}
+
   getAll(id: string): Promise<Keyword[]> {
     const adGroupId = BigInt(id);
     return this.prisma.keyword.findMany({
@@ -17,6 +18,18 @@ export class KeywordService implements IKeywordService {
       orderBy: { keyword: "asc" },
     });
   }
+
+  getLastDate = async (id: string): Promise<Date | null> => {
+    const adGroupId = BigInt(id);
+    const result = await this.prisma.keyword.findFirst({
+      where: { adGroupId },
+      orderBy: { date: "desc" },
+      select: { date: true },
+    });
+
+    return result?.date ?? null;
+  };
+
   upsert = async (rows: KeywordDto[]): Promise<void> => {
     if (!Array.isArray(rows)) throw new ApiError("Keywords must be an array.");
     if (rows.length === 0) return;

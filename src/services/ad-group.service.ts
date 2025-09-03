@@ -19,6 +19,13 @@ export class AdGroupService implements IAdGroupService {
     });
   };
 
+  getCount = async (id: string): Promise<number> => {
+    const campaignId = BigInt(id);
+    return this.prisma.adGroup.count({
+      where: { campaignId },
+    });
+  };
+
   upsert = async (rows: AdGroupDto[]): Promise<void> => {
     if (!Array.isArray(rows)) throw new ApiError("Ad Groups must be an array.");
     const adGroups: AdGroup[] = rows.map((r: AdGroupDto) => ({

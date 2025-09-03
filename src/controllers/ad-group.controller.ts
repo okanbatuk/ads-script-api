@@ -24,6 +24,16 @@ export class AdGroupController {
     );
   };
 
+  getAdGroupCount = async (req: Request, res: Response): Promise<Response> => {
+    const count = await this.service.getCount(req.params.id);
+    return sendResponse(
+      res,
+      200,
+      { count },
+      "AdGroups count successfully retrieved.",
+    );
+  };
+
   upsert = async (req: Request, res: Response): Promise<Response> => {
     console.log(`------- UPSERT Ad Groups --------`);
     await this.service.upsert(req.body);

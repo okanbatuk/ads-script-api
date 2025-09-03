@@ -23,6 +23,16 @@ export class CampaignController {
     );
   };
 
+  getCampaignCount = async (req: Request, res: Response): Promise<Response> => {
+    const totalCount = await this.service.getCount();
+    return sendResponse(
+      res,
+      200,
+      { count: totalCount },
+      "Campaigns count successfully retrieved.",
+    );
+  };
+
   // POST /campaign
   upsert = async (req: Request, res: Response): Promise<Response> => {
     console.log(`------- UPSERT Campaigns --------`);
