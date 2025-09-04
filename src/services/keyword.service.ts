@@ -1,9 +1,15 @@
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types/index.js";
 import { ApiError } from "../errors/api.error.js";
-import type { KeywordDto } from "../dtos/index.js";
+import { prismaKeywordFilter } from "../utils/index.js";
+import { Prisma, PrismaClient, type Keyword } from "../models/prisma.js";
+import type {
+  KeywordDto,
+  KeywordFilter,
+  Pagination,
+  SortDto,
+} from "../dtos/index.js";
 import type { IKeywordService } from "../interfaces/index.js";
-import { PrismaClient, type Keyword } from "../models/prisma.js";
 
 @injectable()
 export class KeywordService implements IKeywordService {
@@ -11,13 +17,48 @@ export class KeywordService implements IKeywordService {
     @inject(TYPES.PrismaClient) private readonly prisma: PrismaClient,
   ) {}
 
-  getAll(id: string): Promise<Keyword[]> {
-    const adGroupId = BigInt(id);
-    return this.prisma.keyword.findMany({
-      where: { adGroupId },
-      orderBy: { keyword: "asc" },
+  getKeywordsByFilter = async (
+    filter: KeywordFilter,
+    sort: SortDto | undefined,
+    pagination: Pagination,
+  ): Promise<{ id: number; keyword: string; avgQs: number }[] | []> => {
+    const { limit = 50, offset = 0 } = pagination;
+
+    const orderBy: Prisma.KeywordOrderByWithRelationInput = sort
+      ? { [sort.field]: sort.direction }
+      : { id: "asc" };
+
+    const rows = await this.prisma.keyword.findMany({
+      where: prismaKeywordFilter(filter),
+      select: { id: true, keyword: true, qs: true },
+      orderBy,
+      take: limit,
+      skip: offset,
     });
-  }
+
+    const map = new Map<
+      string,
+      { ids: number[]; qsTotal: number; count: number }
+    >();
+
+    for (const r of rows) {
+      if (r.qs === null) continue;
+      const key = r.keyword;
+      if (!map.has(key)) {
+        map.set(key, { ids: [], qsTotal: 0, count: 0 });
+      }
+      const entry = map.get(key)!;
+      entry.ids.push(r.id);
+      entry.qsTotal += r.qs;
+      entry.count++;
+    }
+
+    return Array.from(map.entries()).map(([keyword, v]) => ({
+      id: v.ids[0],
+      keyword,
+      avgQs: Number((v.qsTotal / v.count).toFixed(2)),
+    }));
+  };
 
   getLastDate = async (id: string): Promise<Date | null> => {
     const adGroupId = BigInt(id);

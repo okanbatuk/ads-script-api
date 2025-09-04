@@ -3,6 +3,9 @@ import { Request, Response } from "express";
 import { TYPES } from "../types/index.js";
 import { sendResponse } from "../utils/index.js";
 import type { IKeywordService } from "../interfaces/index.js";
+import { KeywordFilter } from "../dtos/index.js";
+import { SortDto } from "src/dtos/sort.dto.js";
+import { Prisma } from "src/models/prisma.js";
 
 @injectable()
 export class KeywordController {
@@ -10,17 +13,54 @@ export class KeywordController {
     @inject(TYPES.KeywordService) private readonly service: IKeywordService,
   ) {}
 
-  getKeywordsByAdGroup = async (
+  resolveQuery = (query: any) => {
+    const { limit, offset, sort, ...rest } = query;
+    const search = Object.fromEntries(
+      Object.entries(rest).filter(([, v]) => v !== undefined),
+    ) as Omit<KeywordFilter, "id">;
+
+    type KeywordOrderField = keyof Prisma.KeywordOrderByWithRelationInput;
+
+    const allowed: KeywordOrderField[] = ["id", "keyword", "qs"];
+
+    let sortObj: SortDto | undefined;
+
+    if (typeof sort === "string") {
+      const [rawField, dir] = sort.split(":");
+      const field = rawField as KeywordOrderField;
+      if (allowed.includes(field)) {
+        sortObj = { field, direction: dir === "desc" ? "desc" : "asc" };
+      }
+    }
+    return {
+      pagination: {
+        limit: Math.max(1, Number(query.limit) || 50),
+        offset: Math.max(0, Number(query.offset) || 0),
+      },
+      sort: sortObj,
+      search,
+    };
+  };
+
+  getKeywordsByFilter = async (
     req: Request,
     res: Response,
   ): Promise<Response> => {
-    console.log(`------- GET Keywords By Ad Group --------`);
-    const result = await this.service.getAll(req.params.id);
+    const { pagination, sort, search } = this.resolveQuery(req.query);
+    const filter: KeywordFilter = {
+      ...search,
+      adGroupId: BigInt(req.params.id),
+    };
+    const result = await this.service.getKeywordsByFilter(
+      filter,
+      sort,
+      pagination,
+    );
     return sendResponse(
       res,
       200,
       result,
-      "All Keywords by AdGroup successfully retrieved.",
+      "All filtered keywords successfully retrieved.",
     );
   };
 

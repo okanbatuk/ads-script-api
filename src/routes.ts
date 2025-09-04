@@ -35,7 +35,7 @@ router
   .get("/campaign/count", cmpgnCtrl.getCampaignCount)
   .get("/adgroup/:id", adgrpCtrl.getAdGroupsByCampaign)
   .get("/adgroup/:id/count", adgrpCtrl.getAdGroupCount)
-  .get("/keyword/:id", kwCtrl.getKeywordsByAdGroup)
+  .get("/keyword/:id", kwCtrl.getKeywordsByFilter)
   .get("/keyword/:id/date", kwCtrl.getLastDate)
   .post("/campaign", cmpgnCtrl.upsert)
   .post("/adgroup", adgrpCtrl.upsert)
