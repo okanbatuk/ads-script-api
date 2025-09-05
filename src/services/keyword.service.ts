@@ -56,12 +56,10 @@ export class KeywordService implements IKeywordService {
       avgQs: Number((v.qsTotal / v.count).toFixed(2)),
     }));
 
-    // 1) toplam kayıt sayısı (aynı WHERE)
     const total = await this.prisma.keyword.count({
       where: prismaKeywordFilter(filter),
     });
 
-    // 2) wrapper ile dön
     return {
       keywords,
       total,

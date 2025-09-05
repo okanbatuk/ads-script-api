@@ -1,6 +1,6 @@
 export type KeywordFilter = {
   adGroupId: bigint;
   keyword?: string;
-  startDate?: string;
-  endDate?: string;
+  start?: string;
+  end?: string;
 };
