@@ -56,6 +56,8 @@ export class KeywordController {
       ...search,
       adGroupId: BigInt(req.params.id),
     };
+
+    console.log("Sort: ", sort);
     const result = await this.service.getKeywordsByFilter(
       filter,
       sort,

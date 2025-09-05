@@ -28,6 +28,8 @@ export class KeywordService implements IKeywordService {
       ? Prisma.raw(`"${sort.field}" ${sort.direction}`)
       : Prisma.raw(`"avgQs" DESC`);
 
+    console.log("Order By: ", orderBy.sql);
+
     const sql = Prisma.sql`
       SELECT MIN("id")        AS id,
              "keyword",
