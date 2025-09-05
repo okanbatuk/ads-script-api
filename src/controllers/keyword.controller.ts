@@ -24,15 +24,17 @@ export class KeywordController {
 
     type KeywordOrderField = keyof Prisma.KeywordOrderByWithRelationInput;
 
-    const allowed: KeywordOrderField[] = ["id", "keyword", "qs"];
+    const allowed: ("keyword" | "avgQs")[] = ["keyword", "avgQs"];
 
     let sortObj: SortDto | undefined;
 
     if (typeof sort === "string") {
       const [rawField, dir] = sort.split(":");
-      const field = rawField as KeywordOrderField;
-      if (allowed.includes(field)) {
-        sortObj = { field, direction: dir === "desc" ? "desc" : "asc" };
+      if (allowed.includes(rawField as any)) {
+        sortObj = {
+          field: rawField as "keyword" | "avgQs",
+          direction: dir === "desc" ? "desc" : "asc",
+        };
       }
     }
 
@@ -57,7 +59,7 @@ export class KeywordController {
       adGroupId: BigInt(req.params.id),
     };
 
-    console.log("Sort: ", sort);
+    console.log(sort);
     const result = await this.service.getKeywordsByFilter(
       filter,
       sort,

@@ -1,6 +1,4 @@
-import { Prisma } from "@prisma/client";
-
 export type SortDto = {
-  field: keyof Prisma.KeywordOrderByWithRelationInput;
+  field: "keyword" | "avgQs";
   direction: "asc" | "desc";
 };

@@ -25,10 +25,12 @@ export class KeywordService implements IKeywordService {
     const { limit = 50, offset = 0 } = pagination;
 
     const orderBy = sort
-      ? Prisma.raw(`"${sort.field}" ${sort.direction}`)
-      : Prisma.raw(`"avgQs" DESC`);
+      ? sort.field === "avgQs"
+        ? Prisma.raw(`ROUND(AVG("qs"), 2) ${sort.direction}`)
+        : Prisma.raw(`"keyword" ${sort.direction}`)
+      : Prisma.raw(`"keyword" ASC`);
 
-    console.log("Order By: ", orderBy.sql);
+    console.log(orderBy);
 
     const sql = Prisma.sql`
       SELECT MIN("id")        AS id,
