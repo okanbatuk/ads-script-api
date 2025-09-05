@@ -1,11 +1,10 @@
 import { inject, injectable } from "inversify";
 import { Request, Response } from "express";
 import { TYPES } from "../types/index.js";
+import { Prisma } from "../models/prisma.js";
 import { sendResponse } from "../utils/index.js";
+import { KeywordFilter, SortDto } from "../dtos/index.js";
 import type { IKeywordService } from "../interfaces/index.js";
-import { KeywordFilter } from "../dtos/index.js";
-import { SortDto } from "src/dtos/sort.dto.js";
-import { Prisma } from "src/models/prisma.js";
 
 @injectable()
 export class KeywordController {

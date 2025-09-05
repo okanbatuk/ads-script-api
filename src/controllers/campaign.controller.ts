@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import { Request, Response } from "express";
 import { TYPES } from "../types/index.js";
-import { sendResponse } from "../utils/index.js";
+import { sendResponse, serializeEntity } from "../utils/index.js";
 import type { ICampaignService } from "../interfaces/index.js";
 import { logger } from "../config/logger.config.js";
 
@@ -18,17 +18,17 @@ export class CampaignController {
     return sendResponse(
       res,
       200,
-      result,
+      serializeEntity(result),
       "All Campaigns successfully retrieved.",
     );
   };
 
   getCampaignCount = async (req: Request, res: Response): Promise<Response> => {
-    const totalCount = await this.service.getCount();
+    const count = await this.service.getCount();
     return sendResponse(
       res,
       200,
-      { count: totalCount },
+      { count },
       "Campaigns count successfully retrieved.",
     );
   };

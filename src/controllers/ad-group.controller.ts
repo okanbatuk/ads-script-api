@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import { Request, Response } from "express";
 import { TYPES } from "../types/index.js";
-import { sendResponse } from "../utils/index.js";
+import { sendResponse, serializeEntity } from "../utils/index.js";
 import type { IAdGroupService } from "../interfaces/index.js";
 
 @injectable()
@@ -19,7 +19,7 @@ export class AdGroupController {
     return sendResponse(
       res,
       200,
-      result,
+      serializeEntity(result),
       "All AdGroups successfully retrieved.",
     );
   };
