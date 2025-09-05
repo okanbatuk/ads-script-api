@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+import { startOfDay, endOfDay } from "date-fns";
 import { KeywordFilter } from "../dtos";
 
 export const prismaKeywordFilter = (
@@ -15,10 +16,10 @@ export const prismaKeywordFilter = (
     };
   }
 
-  if (f.startDate || f.endDate) {
+  if (f.start || f.end) {
     where.date = {};
-    if (f.startDate) where.date.gte = new Date(f.startDate);
-    if (f.endDate) where.date.lte = new Date(f.endDate);
+    if (f.start) where.date.gte = startOfDay(new Date(f.start));
+    if (f.end) where.date.lte = endOfDay(new Date(f.end));
   }
 
   return where;

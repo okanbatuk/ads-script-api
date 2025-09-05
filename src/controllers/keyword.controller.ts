@@ -13,7 +13,11 @@ export class KeywordController {
   ) {}
 
   resolveQuery = (query: any) => {
-    const { limit, offset, sort, ...rest } = query;
+    const { limit, page, sort, ...rest } = query;
+
+    if (rest.start) rest.start = new Date(rest.start);
+    if (rest.end) rest.end = new Date(rest.end);
+
     const search = Object.fromEntries(
       Object.entries(rest).filter(([, v]) => v !== undefined),
     ) as Omit<KeywordFilter, "id">;
@@ -31,11 +35,13 @@ export class KeywordController {
         sortObj = { field, direction: dir === "desc" ? "desc" : "asc" };
       }
     }
+
+    const limitNum = Math.max(1, Number(limit) || 50);
+    const pageNum = Math.max(1, Number(page) || 1);
+    const offset = (pageNum - 1) * limitNum;
+
     return {
-      pagination: {
-        limit: Math.max(1, Number(query.limit) || 50),
-        offset: Math.max(0, Number(query.offset) || 0),
-      },
+      pagination: { limit: limitNum, offset },
       sort: sortObj,
       search,
     };

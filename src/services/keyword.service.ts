@@ -60,10 +60,12 @@ export class KeywordService implements IKeywordService {
       where: prismaKeywordFilter(filter),
     });
 
+    const currentPage = Math.floor(offset / limit) + 1;
+
     return {
       keywords,
       total,
-      page: Number(total / limit) + 1,
+      page: currentPage,
       limit: Number(limit),
     };
   };
