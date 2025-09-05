@@ -11,7 +11,16 @@ export interface IKeywordService {
     filter: KeywordFilter,
     sort: SortDto | undefined,
     pagination: Pagination,
-  ): Promise<{ id: number; keyword: string; avgQs: number }[] | []>;
+  ): Promise<{
+    keywords: {
+      id: number;
+      keyword: string;
+      avgQs: number;
+    }[];
+    total: number;
+    page: number;
+    limit: number;
+  }>;
   getLastDate(id: string): Promise<Date | null>;
   upsert(rows: KeywordDto[]): Promise<void>;
 }

@@ -21,7 +21,7 @@ export class KeywordService implements IKeywordService {
     filter: KeywordFilter,
     sort: SortDto | undefined,
     pagination: Pagination,
-  ): Promise<{ id: number; keyword: string; avgQs: number }[] | []> => {
+  ) => {
     const { limit = 50, offset = 0 } = pagination;
 
     const orderBy: Prisma.KeywordOrderByWithRelationInput = sort
@@ -40,24 +40,34 @@ export class KeywordService implements IKeywordService {
       string,
       { ids: number[]; qsTotal: number; count: number }
     >();
-
     for (const r of rows) {
       if (r.qs === null) continue;
       const key = r.keyword;
-      if (!map.has(key)) {
-        map.set(key, { ids: [], qsTotal: 0, count: 0 });
-      }
-      const entry = map.get(key)!;
-      entry.ids.push(r.id);
-      entry.qsTotal += r.qs;
-      entry.count++;
+      if (!map.has(key)) map.set(key, { ids: [], qsTotal: 0, count: 0 });
+      const v = map.get(key)!;
+      v.ids.push(r.id);
+      v.qsTotal += r.qs;
+      v.count++;
     }
 
-    return Array.from(map.entries()).map(([keyword, v]) => ({
-      id: v.ids[0],
+    const keywords = Array.from(map.entries()).map(([keyword, v]) => ({
+      id: Number(v.ids[0]), // BigInt → number
       keyword,
       avgQs: Number((v.qsTotal / v.count).toFixed(2)),
     }));
+
+    // 1) toplam kayıt sayısı (aynı WHERE)
+    const total = await this.prisma.keyword.count({
+      where: prismaKeywordFilter(filter),
+    });
+
+    // 2) wrapper ile dön
+    return {
+      keywords,
+      total,
+      page: Number(total / limit) + 1,
+      limit: Number(limit),
+    };
   };
 
   getLastDate = async (id: string): Promise<Date | null> => {
