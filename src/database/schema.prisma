@@ -7,36 +7,41 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Status {
-  ENABLED
-  PAUSED
-  REMOVED
-}
-
 model Campaign {
-  id     BigInt @id
-  name   String @unique
-  status Status
+  id       BigInt    @id
+  name     String    @unique
+  status   Status
   adGroups AdGroup[]
+
+  @@map("Campaign")
 }
 
 model AdGroup {
-  id         BigInt @id
+  id         BigInt    @id
   name       String
   campaignId BigInt
   status     Status
-  campaign   Campaign @relation(fields: [campaignId], references: [id])
+  campaign   Campaign  @relation(fields: [campaignId], references: [id])
   keywords   Keyword[]
+
+  @@map("AdGroup")
 }
 
 model Keyword {
-  id          Int     @id @default(autoincrement())
   criterionId BigInt
   keyword     String
   date        DateTime @db.Date
   qs          Int?
   adGroupId   BigInt
+  id          Int      @id @default(autoincrement())
   adGroup     AdGroup  @relation(fields: [adGroupId], references: [id])
 
   @@unique([criterionId, date, adGroupId])
+  @@map("Keyword")
+}
+
+enum Status {
+  ENABLED
+  PAUSED
+  REMOVED
 }

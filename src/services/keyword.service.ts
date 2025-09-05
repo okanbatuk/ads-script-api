@@ -24,48 +24,45 @@ export class KeywordService implements IKeywordService {
   ) => {
     const { limit = 50, offset = 0 } = pagination;
 
-    const orderBy: Prisma.KeywordOrderByWithRelationInput = sort
-      ? { [sort.field]: sort.direction }
-      : { id: "asc" };
+    const orderBy = sort
+      ? Prisma.raw(`"${sort.field}" ${sort.direction}`)
+      : Prisma.raw(`"avgQs" DESC`);
 
-    const rows = await this.prisma.keyword.findMany({
-      where: prismaKeywordFilter(filter),
-      select: { id: true, keyword: true, qs: true },
-      orderBy,
-      take: limit,
-      skip: offset,
-    });
+    const sql = Prisma.sql`
+      SELECT MIN("id")        AS id,
+             "keyword",
+             ROUND(AVG("qs"), 2) AS "avgQs",
+             COUNT(*) OVER () AS "totalGrp"
+      FROM "Keyword"
+      WHERE "adGroupId" = ${filter.adGroupId}
+        ${filter.start ? Prisma.sql`AND "date" >= ${new Date(filter.start)}::date` : Prisma.empty}
+        ${filter.end ? Prisma.sql`AND "date" <= ${new Date(filter.end)}::date` : Prisma.empty}
+        AND "qs" IS NOT NULL
+      GROUP BY "keyword"
+      ORDER BY ${orderBy}
+      LIMIT  ${limit}
+      OFFSET ${offset};
+    `;
 
-    const map = new Map<
-      string,
-      { ids: number[]; qsTotal: number; count: number }
-    >();
-    for (const r of rows) {
-      if (r.qs === null) continue;
-      const key = r.keyword;
-      if (!map.has(key)) map.set(key, { ids: [], qsTotal: 0, count: 0 });
-      const v = map.get(key)!;
-      v.ids.push(r.id);
-      v.qsTotal += r.qs;
-      v.count++;
-    }
+    const list = await this.prisma.$queryRaw<
+      Array<{
+        id: bigint;
+        keyword: string;
+        avgQs: number;
+        totalGrp: number;
+      }>
+    >(sql);
 
-    const keywords = Array.from(map.entries()).map(([keyword, v]) => ({
-      id: Number(v.ids[0]), // BigInt → number
-      keyword,
-      avgQs: Number((v.qsTotal / v.count).toFixed(2)),
-    }));
-
-    const total = await this.prisma.keyword.count({
-      where: prismaKeywordFilter(filter),
-    });
-
-    const currentPage = Math.floor(offset / limit) + 1;
+    const total = list.length > 0 ? Number(list[0].totalGrp) : 0;
 
     return {
-      keywords,
+      keywords: list.map((r) => ({
+        id: Number(r.id),
+        keyword: r.keyword,
+        avgQs: Number(r.avgQs),
+      })),
       total,
-      page: currentPage,
+      page: Math.floor(offset / limit) + 1,
       limit: Number(limit),
     };
   };
