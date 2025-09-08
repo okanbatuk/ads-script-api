@@ -40,6 +40,6 @@ router
   .post("/campaign", cmpgnCtrl.upsert)
   .post("/adgroup", adgrpCtrl.upsert)
   .post("/keyword", kwCtrl.upsert)
-  .delete("/keyword/:id");
+  .delete("/keyword/:id", kwCtrl.delete);
 
 export default router;
