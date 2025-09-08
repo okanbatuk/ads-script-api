@@ -23,4 +23,5 @@ export interface IKeywordService {
   }>;
   getLastDate(id: string): Promise<Date | null>;
   upsert(rows: KeywordDto[]): Promise<void>;
+  delete(id: string): Promise<void>;
 }

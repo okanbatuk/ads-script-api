@@ -39,6 +39,7 @@ router
   .get("/keyword/:id/date", kwCtrl.getLastDate)
   .post("/campaign", cmpgnCtrl.upsert)
   .post("/adgroup", adgrpCtrl.upsert)
-  .post("/keyword", kwCtrl.upsert);
+  .post("/keyword", kwCtrl.upsert)
+  .delete("/keyword/:id");
 
 export default router;

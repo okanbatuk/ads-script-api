@@ -108,4 +108,11 @@ export class KeywordService implements IKeywordService {
       ),
     );
   };
+
+  delete = async (id: string): Promise<void> => {
+    const adGroupId = BigInt(id);
+    await this.prisma.keyword.deleteMany({
+      where: { adGroupId },
+    });
+  };
 }

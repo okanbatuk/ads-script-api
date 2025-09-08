@@ -59,7 +59,6 @@ export class KeywordController {
       adGroupId: BigInt(req.params.id),
     };
 
-    console.log(sort);
     const result = await this.service.getKeywordsByFilter(
       filter,
       sort,
@@ -84,7 +83,7 @@ export class KeywordController {
   };
 
   upsert = async (req: Request, res: Response): Promise<Response> => {
-    console.log(`------- UPSERT Campaigns --------`);
+    console.log(`------- UPSERT KEYWORDS --------`);
     await this.service.upsert(req.body);
     return sendResponse(
       res,
@@ -92,5 +91,11 @@ export class KeywordController {
       undefined,
       "Keywords created successfully retrieved.",
     );
+  };
+
+  delete = async (req: Request, res: Response): Promise<Response> => {
+    console.log("--------- DELETE KEYWORDS BY AD-GROUP ----------");
+    await this.service.delete(req.params.id);
+    return sendResponse(res, 200, undefined, "Keywords deleted successfully!");
   };
 }
