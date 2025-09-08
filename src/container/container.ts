@@ -1,26 +1,33 @@
 import { Container } from "inversify";
 import { PrismaClient } from "@prisma/client";
 import {
-  AdGroupController,
+  AccountController,
   CampaignController,
+  AdGroupController,
   KeywordController,
 } from "../controllers/index.js";
-import { TYPES } from "../types/index.js";
-import { prisma } from "../models/prisma.js";
 import {
+  AccountService,
   CampaignService,
   AdGroupService,
   KeywordService,
 } from "../services/index.js";
 import type {
+  IAccountService,
   ICampaignService,
   IAdGroupService,
   IKeywordService,
 } from "../interfaces/index.js";
+import { TYPES } from "../types/index.js";
+import { prisma } from "../models/prisma.js";
 
 export const container = new Container();
 
 container.bind<PrismaClient>(TYPES.PrismaClient).toConstantValue(prisma);
+container
+  .bind<IAccountService>(TYPES.AccountService)
+  .to(AccountService)
+  .inSingletonScope();
 container
   .bind<ICampaignService>(TYPES.CampaignService)
   .to(CampaignService)
@@ -34,6 +41,10 @@ container
   .to(KeywordService)
   .inSingletonScope();
 
+container
+  .bind<AccountController>(TYPES.AccountController)
+  .to(AccountController)
+  .inSingletonScope();
 container
   .bind<CampaignController>(TYPES.CampaignController)
   .to(CampaignController)

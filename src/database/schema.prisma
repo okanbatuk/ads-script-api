@@ -3,15 +3,27 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Account {
+  id        BigInt      @id
+  name      String
+  status    AccountStatus
+  campaigns Campaign[]
+
+  @@map("Account")
 }
 
 model Campaign {
-  id       BigInt    @id
-  name     String    @unique
-  status   Status
-  adGroups AdGroup[]
+  id        BigInt    @id
+  name      String    @unique
+  accountId BigInt
+  status    Status
+  account   Account @relation(fields: [accountId], references: [id])
+  adGroups  AdGroup[]
 
   @@map("Campaign")
 }
@@ -28,16 +40,23 @@ model AdGroup {
 }
 
 model Keyword {
+  id          Int      @id @default(autoincrement())
   criterionId BigInt
   keyword     String
   date        DateTime @db.Date
   qs          Int?
   adGroupId   BigInt
-  id          Int      @id @default(autoincrement())
   adGroup     AdGroup  @relation(fields: [adGroupId], references: [id])
 
   @@unique([criterionId, date, adGroupId])
   @@map("Keyword")
+}
+
+enum AccountStatus {
+  ACTIVE
+  CANCELLED
+  SUSPENDED
+  UNKNOWN
 }
 
 enum Status {

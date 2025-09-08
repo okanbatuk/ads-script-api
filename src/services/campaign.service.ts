@@ -25,13 +25,14 @@ export class CampaignService implements ICampaignService {
       id: BigInt(r.id),
       name: r.name,
       status: r.status.toUpperCase() as Status,
+      accountId: BigInt(r.accountId),
     }));
     await this.prisma.$transaction(
-      campaigns.map(({ id, name, status }) =>
+      campaigns.map(({ id, name, status, accountId }) =>
         this.prisma.campaign.upsert({
           where: { id },
           update: { name, status },
-          create: { id, name, status },
+          create: { id, name, status, accountId },
         }),
       ),
     );

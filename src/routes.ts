@@ -3,6 +3,7 @@ import {
   CampaignController,
   AdGroupController,
   KeywordController,
+  AccountController,
 } from "./controllers/index.js";
 import { TYPES } from "./types/index.js";
 import { Database } from "./database/index.js";
@@ -12,6 +13,7 @@ import { container } from "./container/container.js";
 
 const router = Router();
 
+const accCtrl = container.get<AccountController>(TYPES.AccountController);
 const cmpgnCtrl = container.get<CampaignController>(TYPES.CampaignController);
 const adgrpCtrl = container.get<AdGroupController>(TYPES.AdGroupController);
 const kwCtrl = container.get<KeywordController>(TYPES.KeywordController);
@@ -37,6 +39,7 @@ router
   .get("/adgroup/:id/count", adgrpCtrl.getAdGroupCount)
   .get("/keyword/:id", kwCtrl.getKeywordsByFilter)
   .get("/keyword/:id/date", kwCtrl.getLastDate)
+  .post("/account", accCtrl.create)
   .post("/campaign", cmpgnCtrl.upsert)
   .post("/adgroup", adgrpCtrl.upsert)
   .post("/keyword", kwCtrl.upsert)
