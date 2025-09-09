@@ -14,6 +14,11 @@ export class AccountService implements IAccountService {
   constructor(
     @inject(TYPES.PrismaClient) private readonly prisma: PrismaClient,
   ) {}
+
+  getAll = async (): Promise<Account[]> => {
+    return this.prisma.account.findMany();
+  };
+
   create = async (row: AccountDto): Promise<void> => {
     if (!row) throw new ApiError("Account cannot be null.");
     const account: Account = {
