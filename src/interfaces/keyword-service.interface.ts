@@ -9,7 +9,7 @@ import type { Keyword } from "../models/prisma.js";
 export interface IKeywordService {
   getKeywordsByFilter(
     filter: KeywordFilter,
-    sort: SortDto | undefined,
+    // sort: SortDto | undefined,
     pagination: Pagination,
   ): Promise<{
     keywords: {

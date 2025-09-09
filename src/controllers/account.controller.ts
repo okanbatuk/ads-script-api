@@ -12,6 +12,7 @@ export class AccountController {
 
   // POST /account
   create = async (req: Request, res: Response): Promise<Response> => {
+    console.log("--- CREATE Account ---");
     await this.service.create(req.body);
     return sendResponse(res, 201, undefined, "Account created successfully.");
   };

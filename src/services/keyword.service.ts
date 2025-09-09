@@ -1,14 +1,14 @@
 import { inject, injectable } from "inversify";
-import { TYPES } from "../types/index.js";
-import { ApiError } from "../errors/api.error.js";
-import { prismaKeywordFilter } from "../utils/index.js";
-import { Prisma, PrismaClient, type Keyword } from "../models/prisma.js";
 import type {
   KeywordDto,
   KeywordFilter,
   Pagination,
   SortDto,
 } from "../dtos/index.js";
+import { TYPES } from "../types/index.js";
+import { ApiError } from "../errors/api.error.js";
+import { prismaKeywordFilter } from "../utils/index.js";
+import { Prisma, PrismaClient, type Keyword } from "../models/prisma.js";
 import type { IKeywordService } from "../interfaces/index.js";
 
 @injectable()
@@ -19,53 +19,58 @@ export class KeywordService implements IKeywordService {
 
   getKeywordsByFilter = async (
     filter: KeywordFilter,
-    sort: SortDto | undefined,
     pagination: Pagination,
   ) => {
     const { limit = 50, offset = 0 } = pagination;
 
-    const orderBy = sort
-      ? sort.field === "avgQs"
-        ? Prisma.raw(`ROUND(AVG("qs"), 2) ${sort.direction}`)
-        : Prisma.raw(`"keyword" ${sort.direction}`)
-      : Prisma.raw(`"keyword" ASC`);
+    // const orderBy = sort
+    //   ? sort.field === "avgQs"
+    //     ? Prisma.raw(`ROUND(AVG("qs"), 2) ${sort.direction}`)
+    //     : Prisma.raw(`"keyword" ${sort.direction}`)
+    //   : Prisma.raw(`"keyword" ASC`);
 
-    console.log(orderBy);
-
+    // console.log(orderBy);
     const sql = Prisma.sql`
-      SELECT MIN("id")        AS id,
-             "keyword",
-             ROUND(AVG("qs"), 2) AS "avgQs",
-             COUNT(*) OVER () AS "totalGrp"
-      FROM "Keyword"
-      WHERE "adGroupId" = ${filter.adGroupId}
-        ${filter.start ? Prisma.sql`AND "date" >= ${new Date(filter.start)}::date` : Prisma.empty}
-        ${filter.end ? Prisma.sql`AND "date" <= ${new Date(filter.end)}::date` : Prisma.empty}
-        AND "qs" IS NOT NULL
-      GROUP BY "keyword"
-      ORDER BY ${orderBy}
-      LIMIT  ${limit}
+      WITH base AS (
+          SELECT
+              keyword,
+              COALESCE(qs, 0)     AS qs_zero,
+              id
+          FROM "Keyword"
+          WHERE "adGroupId" = ${filter.adGroupId}
+            ${filter.start ? Prisma.sql`AND "date" >= ${new Date(filter.start)}::date` : Prisma.empty}
+            ${filter.end ? Prisma.sql`AND "date" <= ${new Date(filter.end)}::date` : Prisma.empty}
+      ),
+      grouped AS (
+        SELECT
+          keyword,
+          AVG(qs_zero)        AS avgQs,
+          COUNT(*)            AS cnt,
+          MIN(id)             AS minId
+        FROM base
+        GROUP BY keyword
+      )
+      SELECT
+        minId               AS id,
+        keyword,
+        ROUND(avgQs, 2)     AS "avgQs",
+        COUNT(*) OVER ()    AS "totalGrp"
+      FROM grouped
+      LIMIT ${limit}
       OFFSET ${offset};
     `;
 
-    const list = await this.prisma.$queryRaw<
-      Array<{
-        id: bigint;
-        keyword: string;
-        avgQs: number;
-        totalGrp: number;
-      }>
-    >(sql);
-
-    const total = list.length > 0 ? Number(list[0].totalGrp) : 0;
-
+    const rows =
+      await this.prisma.$queryRaw<
+        Array<{ id: bigint; keyword: string; avgQs: number; totalGrp: number }>
+      >(sql);
     return {
-      keywords: list.map((r) => ({
+      keywords: rows.map((r) => ({
         id: Number(r.id),
         keyword: r.keyword,
-        avgQs: Number(r.avgQs),
+        avgQs: r.avgQs,
       })),
-      total,
+      total: rows.length > 0 ? Number(rows[0].totalGrp) : 0,
       page: Math.floor(offset / limit) + 1,
       limit: Number(limit),
     };

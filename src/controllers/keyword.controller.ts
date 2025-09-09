@@ -13,7 +13,7 @@ export class KeywordController {
   ) {}
 
   resolveQuery = (query: any) => {
-    const { limit, page, sort, ...rest } = query;
+    const { limit, page, ...rest } = query;
 
     if (rest.start) rest.start = new Date(rest.start);
     if (rest.end) rest.end = new Date(rest.end);
@@ -22,21 +22,21 @@ export class KeywordController {
       Object.entries(rest).filter(([, v]) => v !== undefined),
     ) as Omit<KeywordFilter, "id">;
 
-    type KeywordOrderField = keyof Prisma.KeywordOrderByWithRelationInput;
+    // type KeywordOrderField = keyof Prisma.KeywordOrderByWithRelationInput;
 
-    const allowed: ("keyword" | "avgQs")[] = ["keyword", "avgQs"];
+    // const allowed: ("keyword" | "avgQs")[] = ["keyword", "avgQs"];
 
-    let sortObj: SortDto | undefined;
+    // let sortObj: SortDto | undefined;
 
-    if (typeof sort === "string") {
-      const [rawField, dir] = sort.split(":");
-      if (allowed.includes(rawField as any)) {
-        sortObj = {
-          field: rawField as "keyword" | "avgQs",
-          direction: dir === "desc" ? "desc" : "asc",
-        };
-      }
-    }
+    // if (typeof sort === "string") {
+    //   const [rawField, dir] = sort.split(":");
+    //   if (allowed.includes(rawField as any)) {
+    //     sortObj = {
+    //       field: rawField as "keyword" | "avgQs",
+    //       direction: dir === "desc" ? "desc" : "asc",
+    //     };
+    //   }
+    // }
 
     const limitNum = Math.max(1, Number(limit) || 50);
     const pageNum = Math.max(1, Number(page) || 1);
@@ -44,7 +44,7 @@ export class KeywordController {
 
     return {
       pagination: { limit: limitNum, offset },
-      sort: sortObj,
+      // sort: sortObj,
       search,
     };
   };
@@ -53,17 +53,13 @@ export class KeywordController {
     req: Request,
     res: Response,
   ): Promise<Response> => {
-    const { pagination, sort, search } = this.resolveQuery(req.query);
+    const { pagination, search } = this.resolveQuery(req.query);
     const filter: KeywordFilter = {
       ...search,
       adGroupId: BigInt(req.params.id),
     };
 
-    const result = await this.service.getKeywordsByFilter(
-      filter,
-      sort,
-      pagination,
-    );
+    const result = await this.service.getKeywordsByFilter(filter, pagination);
     return sendResponse(
       res,
       200,
