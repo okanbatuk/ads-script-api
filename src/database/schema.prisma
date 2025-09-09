@@ -19,7 +19,7 @@ model Account {
 
 model Campaign {
   id        BigInt    @id
-  name      String    @unique
+  name      String
   accountId BigInt
   status    Status
   account   Account @relation(fields: [accountId], references: [id])
