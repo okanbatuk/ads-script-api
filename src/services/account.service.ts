@@ -26,6 +26,11 @@ export class AccountService implements IAccountService {
       name: row.name,
       status: row.status.toUpperCase() as AccountStatus,
     };
-    await this.prisma.account.create({ data: account });
+    const { id, name, status } = account;
+    await this.prisma.account.upsert({
+      where: { id },
+      update: { name, status },
+      create: { id, name, status },
+    });
   };
 }
