@@ -53,7 +53,7 @@ model Keyword {
 }
 
 enum AccountStatus {
-  ACTIVE
+  ENABLED
   CANCELLED
   SUSPENDED
   UNKNOWN
