@@ -33,7 +33,8 @@ router
       ? sendResponse(res, 200, undefined, "Database connection established!")
       : sendResponse(res, 503, undefined, "Failed!");
   })
-  .get("/campaign", cmpgnCtrl.getAll)
+  .get("/account", accCtrl.getAll)
+  .get("/campaign/:id", cmpgnCtrl.getCampaignsByAccount)
   .get("/campaign/count", cmpgnCtrl.getCampaignCount)
   .get("/adgroup/:id", adgrpCtrl.getAdGroupsByCampaign)
   .get("/adgroup/:id/count", adgrpCtrl.getAdGroupCount)

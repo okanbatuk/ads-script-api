@@ -56,6 +56,7 @@ export class KeywordService implements IKeywordService {
         ROUND(avgQs, 2)     AS "avgQs",
         COUNT(*) OVER ()    AS "totalGrp"
       FROM grouped
+      ORDER BY keyword ASC
       LIMIT ${limit}
       OFFSET ${offset};
     `;

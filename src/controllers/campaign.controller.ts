@@ -10,10 +10,13 @@ export class CampaignController {
     @inject(TYPES.CampaignService) private readonly service: ICampaignService,
   ) {}
 
-  // GET /campaign
-  getAll = async (req: Request, res: Response): Promise<Response> => {
+  // GET /campaign/:id
+  getCampaignsByAccount = async (
+    req: Request,
+    res: Response,
+  ): Promise<Response> => {
     console.log(`------- GET ALL Campaigns --------`);
-    const result = await this.service.getAll();
+    const result = await this.service.getAll(req.params.id);
     return sendResponse(
       res,
       200,
@@ -23,7 +26,7 @@ export class CampaignController {
   };
 
   getCampaignCount = async (req: Request, res: Response): Promise<Response> => {
-    const count = await this.service.getCount();
+    const count = await this.service.getCount(req.params.id);
     return sendResponse(
       res,
       200,

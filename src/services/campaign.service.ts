@@ -11,12 +11,18 @@ export class CampaignService implements ICampaignService {
     @inject(TYPES.PrismaClient) private readonly prisma: PrismaClient,
   ) {}
 
-  getAll = async (): Promise<Campaign[]> => {
-    return this.prisma.campaign.findMany();
+  getAll = async (id: string): Promise<Campaign[]> => {
+    const accountId = BigInt(id);
+    return this.prisma.campaign.findMany({
+      where: { accountId },
+    });
   };
 
-  getCount = async (): Promise<number> => {
-    return this.prisma.campaign.count();
+  getCount = async (id: string): Promise<number> => {
+    const accountId = BigInt(id);
+    return this.prisma.campaign.count({
+      where: { accountId },
+    });
   };
 
   upsert = async (rows: CampaignDto[]): Promise<void> => {
