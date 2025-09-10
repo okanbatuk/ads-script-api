@@ -81,7 +81,7 @@ export class KeywordService implements IKeywordService {
     const adGroupId = BigInt(id);
     const result = await this.prisma.keyword.findFirst({
       where: { adGroupId },
-      orderBy: { date: "desc" },
+      orderBy: { date: "asc" },
       select: { date: true },
     });
 
