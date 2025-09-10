@@ -16,7 +16,9 @@ export class AccountService implements IAccountService {
   ) {}
 
   getAll = async (): Promise<Account[]> => {
-    return this.prisma.account.findMany();
+    return this.prisma.account.findMany({
+      orderBy: { name: "asc" },
+    });
   };
 
   create = async (row: AccountDto): Promise<void> => {
