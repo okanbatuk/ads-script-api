@@ -1,5 +1,5 @@
 import esbuild from "esbuild";
-import { join, dirname } from "path";
+import { join } from "path";
 import { copyFileSync, mkdirSync, existsSync } from "fs";
 
 // Main build
