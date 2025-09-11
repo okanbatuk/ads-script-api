@@ -4,5 +4,6 @@ export * from "./keyword.dto.js";
 export * from "./account.dto.js";
 export * from "./campaign.dto.js";
 export * from "./pagination.dto.js";
+export * from "./response-date.dto.js";
 export * from "./keyword-filter.dto.js";
 export * from "./keyword-search.dto.js";

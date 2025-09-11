@@ -2,7 +2,7 @@ import type {
   KeywordDto,
   KeywordFilter,
   Pagination,
-  SortDto,
+  ResponseDateDto,
 } from "../dtos/index.js";
 import type { Keyword } from "../models/prisma.js";
 
@@ -21,7 +21,7 @@ export interface IKeywordService {
     page: number;
     limit: number;
   }>;
-  getLastDate(id: string): Promise<Date | null>;
+  getDate(id: string): Promise<ResponseDateDto>;
   upsert(rows: KeywordDto[]): Promise<void>;
   delete(id: string): Promise<void>;
 }

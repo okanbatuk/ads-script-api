@@ -3,6 +3,7 @@ import type {
   KeywordDto,
   KeywordFilter,
   Pagination,
+  ResponseDateDto,
   SortDto,
 } from "../dtos/index.js";
 import { TYPES } from "../types/index.js";
@@ -77,14 +78,18 @@ export class KeywordService implements IKeywordService {
     };
   };
 
-  getLastDate = async (id: string): Promise<Date | null> => {
+  getDate = async (id: string): Promise<ResponseDateDto> => {
     const adGroupId = BigInt(id);
     const result = await this.prisma.keyword.aggregate({
       where: { adGroupId },
+      _min: { date: true },
       _max: { date: true },
     });
 
-    return result?._max.date ?? null;
+    return {
+      minDate: result?._min.date,
+      maxDate: result?._max.date,
+    };
   };
 
   upsert = async (rows: KeywordDto[]): Promise<void> => {

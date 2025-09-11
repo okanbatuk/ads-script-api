@@ -68,8 +68,8 @@ export class KeywordController {
     );
   };
 
-  getLastDate = async (req: Request, res: Response): Promise<Response> => {
-    const result = await this.service.getLastDate(req.params.id);
+  getDate = async (req: Request, res: Response): Promise<Response> => {
+    const result = await this.service.getDate(req.params.id);
     return sendResponse(
       res,
       200,

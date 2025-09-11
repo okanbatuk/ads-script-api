@@ -39,7 +39,7 @@ router
   .get("/adgroup/:id", adgrpCtrl.getAdGroupsByCampaign)
   .get("/adgroup/:id/count", adgrpCtrl.getAdGroupCount)
   .get("/keyword/:id", kwCtrl.getKeywordsByFilter)
-  .get("/keyword/:id/date", kwCtrl.getLastDate)
+  .get("/keyword/:id/date", kwCtrl.getDate)
   .post("/account", accCtrl.create)
   .post("/campaign", cmpgnCtrl.upsert)
   .post("/adgroup", adgrpCtrl.upsert)
