@@ -79,13 +79,12 @@ export class KeywordService implements IKeywordService {
 
   getLastDate = async (id: string): Promise<Date | null> => {
     const adGroupId = BigInt(id);
-    const result = await this.prisma.keyword.findFirst({
+    const result = await this.prisma.keyword.aggregate({
       where: { adGroupId },
-      orderBy: { date: "asc" },
-      select: { date: true },
+      _max: { date: true },
     });
 
-    return result?.date ?? null;
+    return result?._max.date ?? null;
   };
 
   upsert = async (rows: KeywordDto[]): Promise<void> => {
