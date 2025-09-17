@@ -1,15 +1,10 @@
 import { inject, injectable } from "inversify";
-import type {
-  KeywordDto,
-  KeywordFilter,
-  Pagination,
-  ResponseDateDto,
-  SortDto,
-} from "../dtos/index.js";
+import { startOfDay, subDays } from "date-fns";
 import { TYPES } from "../types/index.js";
-import { ApiError } from "../errors/api.error.js";
-import { prismaKeywordFilter } from "../utils/index.js";
-import { Prisma, PrismaClient, type Keyword } from "../models/prisma.js";
+import { Prisma, PrismaClient } from "../models/prisma.js";
+import { KeywordMapper, KeywordScoreMapper } from "../mappers/index.js";
+
+import type { KeywordDto, KeywordScoreDto } from "../dtos/index.js";
 import type { IKeywordService } from "../interfaces/index.js";
 
 @injectable()
@@ -18,111 +13,86 @@ export class KeywordService implements IKeywordService {
     @inject(TYPES.PrismaClient) private readonly prisma: PrismaClient,
   ) {}
 
-  getKeywordsByFilter = async (
-    filter: KeywordFilter,
-    pagination: Pagination,
-  ) => {
-    const { limit = 50, offset = 0 } = pagination;
-
-    // const orderBy = sort
-    //   ? sort.field === "avgQs"
-    //     ? Prisma.raw(`ROUND(AVG("qs"), 2) ${sort.direction}`)
-    //     : Prisma.raw(`"keyword" ${sort.direction}`)
-    //   : Prisma.raw(`"keyword" ASC`);
-
-    // console.log(orderBy);
-    const sql = Prisma.sql`
-      WITH base AS (
-          SELECT
-              keyword,
-              COALESCE(qs, 0)     AS qs_zero,
-              id
-          FROM "Keyword"
-          WHERE "adGroupId" = ${filter.adGroupId}
-            ${filter.start ? Prisma.sql`AND "date" >= ${new Date(filter.start)}::date` : Prisma.empty}
-            ${filter.end ? Prisma.sql`AND "date" <= ${new Date(filter.end)}::date` : Prisma.empty}
-      ),
-      grouped AS (
-        SELECT
-          keyword,
-          AVG(qs_zero)        AS avgQs,
-          COUNT(*)            AS cnt,
-          MIN(id)             AS minId
-        FROM base
-        GROUP BY keyword
-      )
-      SELECT
-        minId               AS id,
-        keyword,
-        ROUND(avgQs, 2)     AS "avgQs",
-        COUNT(*) OVER ()    AS "totalGrp"
-      FROM grouped
-      ORDER BY keyword ASC
-      LIMIT ${limit}
-      OFFSET ${offset};
-    `;
-
-    const rows =
-      await this.prisma.$queryRaw<
-        Array<{ id: bigint; keyword: string; avgQs: number; totalGrp: number }>
-      >(sql);
-    return {
-      keywords: rows.map((r) => ({
-        id: Number(r.id),
-        keyword: r.keyword,
-        avgQs: r.avgQs,
-      })),
-      total: rows.length > 0 ? Number(rows[0].totalGrp) : 0,
-      page: Math.floor(offset / limit) + 1,
-      limit: Number(limit),
+  async getKeywordScores(
+    id: number,
+    days: number = 7,
+  ): Promise<{ scores: KeywordScoreDto[]; total: number }> {
+    const where: Prisma.KeywordScoreWhereInput = {
+      keywordId: id,
+      date: { gte: startOfDay(subDays(new Date(), days)) },
     };
-  };
 
-  getDate = async (id: string): Promise<ResponseDateDto> => {
-    const adGroupId = BigInt(id);
-    const result = await this.prisma.keyword.aggregate({
-      where: { adGroupId },
-      _min: { date: true },
-      _max: { date: true },
+    const [rows, total] = await Promise.all([
+      this.prisma.keywordScore.findMany({
+        where,
+        orderBy: { date: "desc" },
+      }),
+      this.prisma.keywordScore.count({ where }),
+    ]);
+
+    return { scores: KeywordScoreMapper.toDtos(rows), total };
+  }
+
+  async getBulkKeywordScores(
+    ids: number[],
+    days: number = 7,
+  ): Promise<{ scores: KeywordScoreDto[]; total: number }> {
+    const where: Prisma.KeywordScoreWhereInput = {
+      keywordId: { in: ids },
+      date: { gte: startOfDay(subDays(new Date(), days)) },
+    };
+
+    const [rows, total] = await Promise.all([
+      this.prisma.keywordScore.findMany({
+        where,
+        orderBy: { date: "desc" },
+      }),
+      this.prisma.keywordScore.count({ where }),
+    ]);
+
+    return { scores: KeywordScoreMapper.toDtos(rows), total };
+  }
+
+  async getByKeywordId(keywordId: number): Promise<KeywordDto | null> {
+    const row = await this.prisma.keyword.findUnique({
+      where: { id: keywordId },
     });
+    return row ? KeywordMapper.toDto(row) : null;
+  }
 
-    return {
-      minDate: result?._min.date,
-      maxDate: result?._max.date,
-    };
-  };
-
-  upsert = async (rows: KeywordDto[]): Promise<void> => {
-    if (!Array.isArray(rows)) throw new ApiError("Keywords must be an array.");
-    if (rows.length === 0) return;
-    const keywords = rows.map((r: KeywordDto) => ({
-      criterionId: BigInt(r.criterionId),
-      keyword: r.keyword,
-      date: new Date(r.date),
-      qs: r.qs ? Number(r.qs) : null,
-      adGroupId: BigInt(r.adGroupId),
+  async upsertKeywords(items: KeywordDto[]): Promise<void> {
+    const data = items.map((i) => ({
+      criterionId: BigInt(i.criterionId),
+      keyword: i.keyword,
+      adGroupId: BigInt(i.adGroupId),
     }));
-    await this.prisma.$transaction(
-      keywords.map(({ criterionId, keyword, date, qs, adGroupId }) =>
-        this.prisma.keyword.upsert({
+
+    await this.prisma.$transaction(async (tx) => {
+      for (const row of data) {
+        await tx.keyword.upsert({
           where: {
-            criterionId_date_adGroupId: {
-              criterionId: criterionId,
-              date: date,
-              adGroupId: adGroupId,
+            criterionId_adGroupId: {
+              criterionId: row.criterionId,
+              adGroupId: row.adGroupId,
             },
           },
-          update: { qs },
-          create: { criterionId, keyword, date, qs, adGroupId },
-        }),
-      ),
-    );
-  };
-
-  delete = async (id: string): Promise<void> => {
-    const adGroupId = BigInt(id);
-    await this.prisma.keyword.deleteMany({
-      where: { adGroupId },
+          update: { keyword: row.keyword },
+          create: row,
+        });
+      }
     });
-  };
+  }
+
+  async setKeywordScores(
+    scores: {
+      keywordId: number;
+      date: Date;
+      qs: number;
+    }[],
+  ): Promise<void> {
+    await this.prisma.keywordScore.createMany({
+      data: scores,
+      skipDuplicates: true,
+    });
+  }
 }

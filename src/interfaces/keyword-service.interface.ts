@@ -1,27 +1,31 @@
-import type {
-  KeywordDto,
-  KeywordFilter,
-  Pagination,
-  ResponseDateDto,
-} from "../dtos/index.js";
-import type { Keyword } from "../models/prisma.js";
+import type { KeywordDto, KeywordScoreDto } from "../dtos";
 
 export interface IKeywordService {
-  getKeywordsByFilter(
-    filter: KeywordFilter,
-    // sort: SortDto | undefined,
-    pagination: Pagination,
+  getKeywordScores(
+    id: number,
+    days: number,
   ): Promise<{
-    keywords: {
-      id: number;
-      keyword: string;
-      avgQs: number;
-    }[];
+    scores: KeywordScoreDto[];
     total: number;
-    page: number;
-    limit: number;
   }>;
-  getDate(id: string): Promise<ResponseDateDto>;
-  upsert(rows: KeywordDto[]): Promise<void>;
-  delete(id: string): Promise<void>;
+
+  getBulkKeywordScores(
+    ids: number[],
+    days: number,
+  ): Promise<{
+    scores: KeywordScoreDto[];
+    total: number;
+  }>;
+
+  getByKeywordId(id: number): Promise<KeywordDto | null>;
+
+  upsertKeywords(items: KeywordDto[]): Promise<void>;
+
+  setKeywordScores(
+    scores: {
+      keywordId: number;
+      date: Date;
+      qs: number;
+    }[],
+  ): Promise<void>;
 }
