@@ -1,5 +1,8 @@
+import { AccountScoreDto } from "./account-score.dto";
+
 export type AccountDto = {
-  id: string;
-  name: string;
-  status: string;
+  readonly id: string;
+  readonly name: string;
+  readonly status: string;
+  readonly scores: AccountScoreDto[];
 };

@@ -1,7 +1,9 @@
+import { KeywordScoreDto } from "./keyword-score.dto";
+
 export type KeywordDto = {
-  criterionId: string;
-  keyword: string;
-  qs: string | null;
-  date: string;
-  adGroupId: string;
+  readonly id: number;
+  readonly criterionId: string;
+  readonly keyword: string;
+  readonly adGroupId: string;
+  readonly scores?: KeywordScoreDto[];
 };

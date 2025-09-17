@@ -1,6 +1,9 @@
+import { CampaignScoreDto } from "./campaign-score.dto";
+
 export type CampaignDto = {
-  id: string;
-  name: string;
-  status: string;
-  accountId: string;
+  readonly id: string;
+  readonly name: string;
+  readonly status: string;
+  readonly accountId: string;
+  readonly scores: CampaignScoreDto[];
 };

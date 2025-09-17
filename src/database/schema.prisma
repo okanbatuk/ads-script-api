@@ -13,6 +13,7 @@ model Account {
   name      String
   status    AccountStatus
   campaigns Campaign[]
+  scores    AccountScore[]
 
   @@map("Account")
 }
@@ -24,6 +25,7 @@ model Campaign {
   status    Status
   account   Account @relation(fields: [accountId], references: [id])
   adGroups  AdGroup[]
+  scores    CampaignScore[]
 
   @@map("Campaign")
 }
@@ -35,6 +37,7 @@ model AdGroup {
   status     Status
   campaign   Campaign  @relation(fields: [campaignId], references: [id])
   keywords   Keyword[]
+  scores     AdGroupScore[]
 
   @@map("AdGroup")
 }
@@ -43,13 +46,72 @@ model Keyword {
   id          Int      @id @default(autoincrement())
   criterionId BigInt
   keyword     String
-  date        DateTime @db.Date
-  qs          Int?
   adGroupId   BigInt
   adGroup     AdGroup  @relation(fields: [adGroupId], references: [id])
+  scores      KeywordScore[]
 
-  @@unique([criterionId, date, adGroupId])
+  @@unique([criterionId, adGroupId])
   @@map("Keyword")
+}
+
+model KeywordScore {
+  id        Int      @id @default(autoincrement())
+  keywordId Int
+  date      DateTime @db.Date
+  qs        Int
+  keyword   Keyword  @relation(fields: [keywordId], references: [id], onDelete: Cascade)
+
+  @@unique([keywordId, date])
+  @@index([date])
+  @@map("KeywordScore")
+}
+
+model AdGroupScore {
+  id            Int      @id @default(autoincrement())
+  adGroupId     BigInt
+  date          DateTime @db.Date
+  qs            Float
+  keywordCount  Int
+  adGroup       AdGroup  @relation(fields: [adGroupId], references: [id], onDelete: Cascade)
+
+  @@unique([adGroupId, date])
+  @@index([date])
+  @@map("AdGroupScore")
+}
+
+model CampaignScore {
+  id            Int       @id @default(autoincrement())
+  campaignId    BigInt
+  date          DateTime  @db.Date
+  qs            Float
+  adGroupCount  Int
+  campaign      Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignId, date])
+  @@index([date])
+  @@map("CampaignScore")
+}
+
+model AccountScore {
+  id            Int      @id @default(autoincrement())
+  accountId     BigInt
+  date          DateTime @db.Date
+  qs            Float
+  campaignCount Int
+  account       Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@unique([accountId, date])
+  @@index([date])
+  @@map("AccountScore")
+}
+
+model GlobalScore {
+  id            Int      @id @default(autoincrement())
+  date          DateTime @db.Date @unique
+  qs            Float
+  accountCount  Int
+
+  @@map("GlobalScore")
 }
 
 enum AccountStatus {
