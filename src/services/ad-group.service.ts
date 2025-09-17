@@ -1,9 +1,17 @@
 import { inject, injectable } from "inversify";
+import { startOfDay, subDays } from "date-fns";
 import { TYPES } from "../types/index.js";
-import { ApiError } from "../errors/api.error.js";
-import type { AdGroupDto } from "../dtos/index.js";
+import {
+  AdGroup,
+  AdGroupScore,
+  Prisma,
+  PrismaClient,
+  Status,
+} from "../models/prisma.js";
+import { AdGroupMapper, AdGroupScoreMapper } from "../mappers/index.js";
+
 import type { IAdGroupService } from "../interfaces/index.js";
-import { type AdGroup, PrismaClient, type Status } from "../models/prisma.js";
+import type { AdGroupDto, AdGroupScoreDto } from "../dtos/index.js";
 
 @injectable()
 export class AdGroupService implements IAdGroupService {
@@ -11,37 +19,127 @@ export class AdGroupService implements IAdGroupService {
     @inject(TYPES.PrismaClient) private readonly prisma: PrismaClient,
   ) {}
 
-  getAll = async (id: string): Promise<AdGroup[]> => {
-    const campaignId = BigInt(id);
-    return this.prisma.adGroup.findMany({
-      where: { campaignId },
-      orderBy: { name: "asc" },
+  transform = (row: AdGroupDto): AdGroup => {
+    const entries = Object.entries(row).map(([key, value]) => {
+      if (key === "id" || key === "campaignId")
+        return [key, BigInt(value as string)];
+
+      if (key === "status") {
+        const upper = (value as string).toUpperCase();
+        return Object.values(Status).includes(upper as Status)
+          ? [key, upper as Status]
+          : [key, Status.UNKNOWN];
+      }
+      return [key, value];
     });
+    return Object.fromEntries(entries) as AdGroup;
   };
 
-  getCount = async (id: string): Promise<number> => {
-    const campaignId = BigInt(id);
-    return this.prisma.adGroup.count({
-      where: { campaignId },
-    });
-  };
+  async getAdGroupScores(
+    adGroupId: bigint,
+    days: number = 7,
+  ): Promise<{ scores: AdGroupScoreDto[]; total: number }> {
+    const where: Prisma.AdGroupScoreWhereInput = {
+      adGroupId,
+      date: { gte: startOfDay(subDays(new Date(), days)) },
+    };
 
-  upsert = async (rows: AdGroupDto[]): Promise<void> => {
-    if (!Array.isArray(rows)) throw new ApiError("Ad Groups must be an array.");
-    const adGroups: AdGroup[] = rows.map((r: AdGroupDto) => ({
-      id: BigInt(r.id),
-      name: r.name,
-      campaignId: BigInt(r.campaignId),
-      status: r.status.toUpperCase() as Status,
-    }));
-    await this.prisma.$transaction(
-      adGroups.map(({ id, name, status, campaignId }) =>
-        this.prisma.adGroup.upsert({
-          where: { id },
-          update: { name, status, campaignId },
-          create: { id, name, status, campaignId },
-        }),
-      ),
+    const [rows, total] = await Promise.all([
+      this.prisma.adGroupScore.findMany({ where, orderBy: { date: "desc" } }),
+      this.prisma.adGroupScore.count({ where }),
+    ]);
+
+    return { scores: AdGroupScoreMapper.toDtos(rows), total };
+  }
+  async getBulkAdGroupScores(
+    adGroupIds: bigint[],
+    days: number = 7,
+  ): Promise<{ scores: AdGroupScoreDto[]; total: number }> {
+    const where: Prisma.AdGroupScoreWhereInput = {
+      adGroupId: { in: adGroupIds },
+      date: { gte: startOfDay(subDays(new Date(), days)) },
+    };
+    const [rows, total] = await Promise.all([
+      this.prisma.adGroupScore.findMany({ where, orderBy: { date: "desc" } }),
+      this.prisma.adGroupScore.count({ where }),
+    ]);
+    return { scores: AdGroupScoreMapper.toDtos(rows), total };
+  }
+  async getById(adGroupId: bigint): Promise<AdGroupDto | null> {
+    const raw = await this.prisma.adGroup.findUnique({
+      where: { id: adGroupId },
+    });
+    return raw ? AdGroupMapper.toDto(raw) : null;
+  }
+
+  async upsertAdGroups(items: AdGroupDto[]): Promise<void> {
+    const data = items.map((i) => this.transform(i));
+
+    await this.prisma.$transaction(async (tx) => {
+      for (const row of data) {
+        await tx.adGroup.upsert({
+          where: { id: row.id },
+          update: {
+            name: row.name,
+            status: row.status,
+          },
+          create: row,
+        });
+      }
+    });
+  }
+
+  async setAdGroupScores(adGroupIds: bigint[], date: Date): Promise<void> {
+    const rows = await this.prisma.keyword.findMany({
+      where: { adGroupId: { in: adGroupIds } },
+      include: {
+        scores: {
+          where: { date },
+          select: { qs: true },
+        },
+      },
+    });
+
+    const map = new Map<bigint, { qsSum: number; count: number }>();
+
+    for (let kw of rows) {
+      if (kw.scores.length === 0) continue;
+      const key = kw.adGroupId;
+      const curr = map.get(key) ?? { qsSum: 0, count: 0 };
+      for (let sc of kw.scores) {
+        curr.qsSum += sc.qs;
+        curr.count += 1;
+      }
+      map.set(key, curr);
+    }
+
+    const data: Omit<AdGroupScore, "id">[] = Array.from(map.entries()).map(
+      ([adGroupId, v]) => ({
+        adGroupId,
+        date,
+        qs: v.count ? v.qsSum / v.count : 0,
+        keywordCount: v.count,
+      }),
     );
-  };
+
+    if (data.length) {
+      const adGroupIds = data.map((d) => d.adGroupId);
+      const dates = data.map((d) => d.date);
+      const qsArr = data.map((d) => d.qs);
+      const counts = data.map((d) => d.keywordCount);
+
+      await this.prisma.$executeRaw`
+        INSERT INTO ad_group_score (ad_group_id, date, qs, keyword_count)
+        SELECT * FROM UNNEST(
+          ${adGroupIds}::bigint[],
+          ${dates}::date[],
+          ${qsArr}::float[],
+          ${counts}::int[]
+        ) AS t(ad_group_id, date, qs, keyword_count)
+        ON CONFLICT (ad_group_id, date)
+        DO UPDATE SET
+          qs = EXCLUDED.qs,
+          keyword_count = EXCLUDED.keyword_count`;
+    }
+  }
 }

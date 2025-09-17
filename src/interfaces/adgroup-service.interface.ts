@@ -1,8 +1,25 @@
-import type { AdGroupDto } from "../dtos/index.js";
-import type { AdGroup } from "../models/prisma.js";
+import type { AdGroupDto, AdGroupScoreDto } from "../dtos";
 
 export interface IAdGroupService {
-  getAll(id: string): Promise<AdGroup[]>;
-  getCount(id: string): Promise<number>;
-  upsert(rows: AdGroupDto[]): Promise<void>;
+  getAdGroupScores(
+    adGroupId: bigint,
+    days: number,
+  ): Promise<{
+    scores: AdGroupScoreDto[];
+    total: number;
+  }>;
+
+  getBulkAdGroupScores(
+    adGroupIds: bigint[],
+    days: number,
+  ): Promise<{
+    scores: AdGroupScoreDto[];
+    total: number;
+  }>;
+
+  getById(adGroupId: bigint): Promise<AdGroupDto | null>;
+
+  upsertAdGroups(items: AdGroupDto[]): Promise<void>;
+
+  setAdGroupScores(adGroupIds: bigint[], date: Date): Promise<void>;
 }
