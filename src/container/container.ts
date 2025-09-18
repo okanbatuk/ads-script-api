@@ -11,12 +11,14 @@ import {
   CampaignService,
   AdGroupService,
   KeywordService,
+  GlobalScoreService,
 } from "../services/index.js";
 import type {
   IAccountService,
   ICampaignService,
   IAdGroupService,
   IKeywordService,
+  IGlobalScoreService,
 } from "../interfaces/index.js";
 import { TYPES } from "../types/index.js";
 import { prisma } from "../models/prisma.js";
@@ -24,6 +26,10 @@ import { prisma } from "../models/prisma.js";
 export const container = new Container();
 
 container.bind<PrismaClient>(TYPES.PrismaClient).toConstantValue(prisma);
+container
+  .bind<IGlobalScoreService>(TYPES.GlobalScoreService)
+  .to(GlobalScoreService)
+  .inSingletonScope();
 container
   .bind<IAccountService>(TYPES.AccountService)
   .to(AccountService)
