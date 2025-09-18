@@ -1,8 +1,25 @@
-import type { CampaignDto } from "../dtos/index.js";
-import type { Campaign } from "../models/prisma.js";
+import type { CampaignDto, CampaignScoreDto } from "../dtos/index.js";
 
 export interface ICampaignService {
-  getAll(id: string): Promise<Campaign[]>;
-  getCount(id: string): Promise<number>;
-  upsert(rows: CampaignDto[]): Promise<void>;
+  getCampaignScores(
+    campaignId: bigint,
+    days: number,
+  ): Promise<{
+    scores: CampaignScoreDto[];
+    total: number;
+  }>;
+
+  getBulkCampaignScores(
+    campaignIds: bigint[],
+    days: number,
+  ): Promise<{
+    scores: CampaignScoreDto[];
+    total: number;
+  }>;
+
+  getById(campaignId: bigint): Promise<CampaignDto | null>;
+
+  upsertCampaigns(items: CampaignDto[]): Promise<void>;
+
+  setCampaignScores(campaignIds: bigint[], date: Date): Promise<void>;
 }

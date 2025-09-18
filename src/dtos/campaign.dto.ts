@@ -5,5 +5,5 @@ export type CampaignDto = {
   readonly name: string;
   readonly status: string;
   readonly accountId: string;
-  readonly scores: CampaignScoreDto[];
+  readonly scores: CampaignScoreDto[] | undefined;
 };
