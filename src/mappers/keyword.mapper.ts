@@ -1,6 +1,6 @@
 import { Keyword, Prisma } from "@prisma/client";
-import { KeywordDto } from "../dtos";
-import { KeywordScoreMapper } from "./keyword-score.mapper";
+import { KeywordDto } from "../dtos/index.js";
+import { KeywordScoreMapper } from "./keyword-score.mapper.js";
 
 type RowKeyword =
   | Keyword

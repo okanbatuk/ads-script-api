@@ -10,8 +10,8 @@ import {
   PrismaClient,
   Status,
 } from "../models/prisma.js";
-import type { CampaignDto, CampaignScoreDto } from "../dtos/index.js";
 import type { ICampaignService } from "../interfaces/index.js";
+import type { CampaignDto, CampaignScoreDto } from "../dtos/index.js";
 
 @injectable()
 export class CampaignService implements ICampaignService {
@@ -136,17 +136,17 @@ export class CampaignService implements ICampaignService {
       const counts = data.map((d) => d.adGroupCount);
 
       await this.prisma.$executeRaw`
-              INSERT INTO campaign_score (campaign_id, date, qs, ad_group_count)
-              SELECT * FROM UNNEST(
-                ${campaignIds}::bigint[],
-                ${dates}::date[],
-                ${qsArr}::float[],
-                ${counts}::int[]
-              ) AS t(campaign_id, date, qs, ad_group_count)
-              ON CONFLICT (campaign_id, date)
-              DO UPDATE SET
-                qs = EXCLUDED.qs,
-                ad_group_count = EXCLUDED.ad_group_count`;
+        INSERT INTO campaign_score (campaign_id, date, qs, ad_group_count)
+        SELECT * FROM UNNEST(
+          ${campaignIds}::bigint[],
+          ${dates}::date[],
+          ${qsArr}::float[],
+          ${counts}::int[]
+        ) AS t(campaign_id, date, qs, ad_group_count)
+        ON CONFLICT (campaign_id, date)
+        DO UPDATE SET
+          qs = EXCLUDED.qs,
+          ad_group_count = EXCLUDED.ad_group_count`;
     }
   }
 }

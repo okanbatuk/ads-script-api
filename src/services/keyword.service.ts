@@ -4,8 +4,8 @@ import { TYPES } from "../types/index.js";
 import { Prisma, PrismaClient } from "../models/prisma.js";
 import { KeywordMapper, KeywordScoreMapper } from "../mappers/index.js";
 
-import type { KeywordDto, KeywordScoreDto } from "../dtos/index.js";
 import type { IKeywordService } from "../interfaces/index.js";
+import type { KeywordDto, KeywordScoreDto } from "../dtos/index.js";
 
 @injectable()
 export class KeywordService implements IKeywordService {
