@@ -1,17 +1,17 @@
 import { inject, injectable } from "inversify";
 import { startOfDay, subDays } from "date-fns";
 import { TYPES } from "../types/index.js";
-import { ApiError } from "../errors/api.error.js";
-import type { CampaignDto, CampaignScoreDto } from "../dtos/index.js";
-import type { ICampaignService } from "../interfaces/index.js";
+import { CampaignMapper, CampaignScoreMapper } from "../mappers/index.js";
+
 import {
   type Campaign,
-  CampaignScore,
+  type CampaignScore,
   Prisma,
   PrismaClient,
   Status,
 } from "../models/prisma.js";
-import { CampaignMapper, CampaignScoreMapper } from "../mappers/index.js";
+import type { CampaignDto, CampaignScoreDto } from "../dtos/index.js";
+import type { ICampaignService } from "../interfaces/index.js";
 
 @injectable()
 export class CampaignService implements ICampaignService {

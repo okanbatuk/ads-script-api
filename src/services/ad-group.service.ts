@@ -32,7 +32,7 @@ export class AdGroupService implements IAdGroupService {
       }
       return [key, value];
     });
-    return Object.fromEntries(entries) as AdGroup;
+    return Object.fromEntries(entries);
   };
 
   async getAdGroupScores(
@@ -51,6 +51,7 @@ export class AdGroupService implements IAdGroupService {
 
     return { scores: AdGroupScoreMapper.toDtos(rows), total };
   }
+
   async getBulkAdGroupScores(
     adGroupIds: bigint[],
     days: number = 7,
@@ -65,6 +66,7 @@ export class AdGroupService implements IAdGroupService {
     ]);
     return { scores: AdGroupScoreMapper.toDtos(rows), total };
   }
+
   async getById(adGroupId: bigint): Promise<AdGroupDto | null> {
     const raw = await this.prisma.adGroup.findUnique({
       where: { id: adGroupId },
