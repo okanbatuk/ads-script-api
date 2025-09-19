@@ -7,7 +7,7 @@ import { ApiError } from "../errors/api.error.js";
 import type { IKeywordService } from "../interfaces/index.js";
 import type {
   IntIdParamDto,
-  KeywordBulkBodyDto,
+  KeywordBulkDto,
   KeywordSetScoreDto,
   KeywordUpsertDto,
 } from "../schemas/index.js";
@@ -33,7 +33,7 @@ export class KeywordController {
 
   // GET /api/keywords/bulkscores?days=7
   getBulkScores = async (req: Request, res: Response): Promise<void> => {
-    const { ids }: KeywordBulkBodyDto = req.body;
+    const { ids }: KeywordBulkDto = req.body;
     const days = Number(req.validatedQuery?.days ?? "7");
     const result = await this.service.getBulkKeywordScores(ids, days);
     sendResponse(

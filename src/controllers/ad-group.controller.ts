@@ -5,7 +5,7 @@ import { sendResponse } from "../utils/index.js";
 import { ApiError } from "../errors/api.error.js";
 
 import type {
-  AdGroupBulkBodyDto,
+  AdGroupBulkDto,
   AdGroupScoresDto,
   AdGroupUpsertDto,
   BigIntIdParamDto,
@@ -34,7 +34,7 @@ export class AdGroupController {
 
   // GET /api/adgroups/bulkscores?days=7
   getBulkScores = async (req: Request, res: Response): Promise<Response> => {
-    const { ids }: AdGroupBulkBodyDto = req.body;
+    const { ids }: AdGroupBulkDto = req.body;
     const days = Number(req.validatedQuery?.days ?? "7");
     const result = await this.service.getBulkAdGroupScores(ids, days);
     return sendResponse(
