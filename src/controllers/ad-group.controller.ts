@@ -1,13 +1,13 @@
 import { inject, injectable } from "inversify";
-import { Request, Response } from "express";
+import { Response } from "express";
 import { TYPES } from "../types/index.js";
 import { sendResponse } from "../utils/index.js";
 import { ApiError } from "../errors/api.error.js";
 
 import type {
-  AdGroupBulkDto,
   AdGroupScoresDto,
   AdGroupUpsertDto,
+  BigIntBulkDto,
   BigIntIdParamDto,
 } from "../schemas/index.js";
 import type { IAdGroupService } from "../interfaces/index.js";
@@ -19,57 +19,72 @@ export class AdGroupController {
   ) {}
 
   // GET /api/adgroups/:id/scores?days=7
-  getScores = async (req: Request, res: Response): Promise<Response> => {
-    const { id } = req.validatedParams as BigIntIdParamDto;
-    const days = Number(req.validatedQuery?.days ?? "7");
-
-    const result = await this.service.getAdGroupScores(id, days);
+  getScores = async (
+    req: IdAndDaysRequest<BigIntIdParamDto>,
+    res: Response,
+  ): Promise<Response> => {
+    const result = await this.service.getAdGroupScores(
+      req.validatedParams.id,
+      req.validatedQuery.days,
+    );
     return sendResponse(
       res,
       200,
       result,
-      `All score records for Ad Group ID: ${id} on ${days} day(s) have been successfully retrieved.`,
+      `All score records for Ad Group ID: ${req.validatedParams.id} on ${req.validatedQuery.days} day(s) have been successfully retrieved.`,
     );
   };
 
   // GET /api/adgroups/bulkscores?days=7
-  getBulkScores = async (req: Request, res: Response): Promise<Response> => {
-    const { ids }: AdGroupBulkDto = req.body;
-    const days = Number(req.validatedQuery?.days ?? "7");
-    const result = await this.service.getBulkAdGroupScores(ids, days);
+  getBulkScores = async (
+    req: DaysAndBodyRequest<BigIntBulkDto>,
+    res: Response,
+  ): Promise<Response> => {
+    const result = await this.service.getBulkAdGroupScores(
+      req.body.ids,
+      req.validatedQuery.days,
+    );
     return sendResponse(
       res,
       200,
       result,
-      `Bulk scores for ${ids.length} ad group(s) over ${days} day(s) retrieved.`,
+      `Bulk scores for ${req.body.ids.length} ad group(s) over ${req.validatedQuery.days} day(s) retrieved.`,
     );
   };
 
   // GET /api/adgroups/:id
-  getById = async (req: Request, res: Response): Promise<Response> => {
-    const { id } = req.validatedParams as BigIntIdParamDto;
-    const dto = await this.service.getById(id);
-    if (!dto) throw new ApiError(`Ad Group with ID: ${id} not found!`);
+  getById = async (
+    req: IdOnlyRequest<BigIntIdParamDto>,
+    res: Response,
+  ): Promise<Response> => {
+    const dto = await this.service.getById(req.validatedParams.id);
+    if (!dto)
+      throw new ApiError(
+        `Ad Group with ID: ${req.validatedParams.id} not found!`,
+      );
     return sendResponse(
       res,
       200,
       dto,
-      `Ad Group with ID: ${id} retrieved successfully.`,
+      `Ad Group with ID: ${req.validatedParams.id} retrieved successfully.`,
     );
   };
 
   // POST /api/adgroups
-  upsert = async (req: Request, res: Response): Promise<Response> => {
-    const items: AdGroupUpsertDto[] = req.body;
-    await this.service.upsert(items);
+  upsert = async (
+    req: BodyOnlyRequest<AdGroupUpsertDto[]>,
+    res: Response,
+  ): Promise<Response> => {
+    await this.service.upsert(req.body);
     return sendResponse(res, 204, null, "Ad Groups upserted successfully.");
   };
 
   // POST /api/adgroups/scores
-  setScores = async (req: Request, res: Response): Promise<Response> => {
-    const { adGroupIds, date }: AdGroupScoresDto = req.body;
-
-    await this.service.setAdGroupScores(adGroupIds, date);
+  setScores = async (
+    req: BodyOnlyRequest<AdGroupScoresDto>,
+    res: Response,
+  ): Promise<Response> => {
+    await this.service.setAdGroupScores(req.body.adGroupIds, req.body.date);
 
     return sendResponse(res, 204, null, "Ad Groups scores set successfully.");
   };

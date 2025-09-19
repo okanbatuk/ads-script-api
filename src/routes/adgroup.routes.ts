@@ -9,7 +9,7 @@ import {
   bigIntIdParamSchema,
   adGroupUpsertSchema,
   adGroupScoresSchema,
-  adGroupBulkSchema,
+  bigIntBulkSchema,
 } from "../schemas/index.js";
 import { TYPES } from "../types/index.js";
 import { container } from "../container/container.js";
@@ -31,7 +31,7 @@ adGroupRouter.get(
 adGroupRouter.get(
   "/bulkscores",
   validateQuery,
-  validateBody(adGroupBulkSchema),
+  validateBody(bigIntBulkSchema),
   asyncHandler(ctrl.getBulkScores),
 );
 

@@ -5,10 +5,10 @@ import {
   validateQuery,
 } from "../middleware/index.js";
 import {
-  keywordBulkSchema,
   intIdParamSchema,
   keywordUpsertSchema,
   keywordScoresSchema,
+  intBulkSchema,
 } from "../schemas/index.js";
 import { TYPES } from "../types/index.js";
 import { asyncHandler } from "../utils/index.js";
@@ -23,7 +23,7 @@ keywordRouter
   .get(
     "/bulkscores",
     validateQuery,
-    validateBody(keywordBulkSchema),
+    validateBody(intBulkSchema),
     asyncHandler(ctrl.getBulkScores),
   )
   .get(

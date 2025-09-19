@@ -5,6 +5,7 @@ import {
   validateQuery,
 } from "../middleware/index.js";
 import {
+  bigIntBulkSchema,
   bigIntIdParamSchema,
   campaignScoresSchema,
   campaignUpsertSchema,
@@ -30,6 +31,7 @@ campaignRouter.get(
 campaignRouter.get(
   "/bulkscores",
   validateQuery,
+  validateBody(bigIntBulkSchema),
   asyncHandler(ctrl.getBulkScores),
 );
 
