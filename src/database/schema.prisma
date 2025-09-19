@@ -46,6 +46,7 @@ model Keyword {
   id          Int      @id @default(autoincrement())
   criterionId BigInt
   keyword     String
+  status      Status
   adGroupId   BigInt
   adGroup     AdGroup  @relation(fields: [adGroupId], references: [id])
   scores      KeywordScore[]

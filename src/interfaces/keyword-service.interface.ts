@@ -20,7 +20,7 @@ export interface IKeywordService {
 
   getByKeywordId(id: number): Promise<KeywordDto | null>;
 
-  upsertKeywords(items: KeywordUpsertDto): Promise<void>;
+  upsertKeywords(items: KeywordUpsertDto[]): Promise<void>;
 
   setKeywordScores(
     scores: {

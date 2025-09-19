@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import { startOfDay, subDays } from "date-fns";
 import { TYPES } from "../types/index.js";
-import { Prisma, PrismaClient } from "../models/prisma.js";
+import { Keyword, Prisma, PrismaClient, Status } from "../models/prisma.js";
 import { KeywordMapper, KeywordScoreMapper } from "../mappers/index.js";
 
 import type { KeywordDto, KeywordScoreDto } from "../dtos/index.js";
@@ -13,6 +13,19 @@ export class KeywordService implements IKeywordService {
   constructor(
     @inject(TYPES.PrismaClient) private readonly prisma: PrismaClient,
   ) {}
+
+  transform = (row: KeywordUpsertDto): Keyword => {
+    const entries = Object.entries(row).map(([key, value]) => {
+      if (key === "status") {
+        const upper = (value as string).toUpperCase();
+        return Object.values(Status).includes(upper as Status)
+          ? [key, upper as Status]
+          : [key, Status.UNKNOWN];
+      }
+      return [key, value];
+    });
+    return Object.fromEntries(entries);
+  };
 
   async getKeywordScores(
     id: number,
@@ -61,9 +74,10 @@ export class KeywordService implements IKeywordService {
     return row ? KeywordMapper.toDto(row) : null;
   }
 
-  async upsertKeywords(items: KeywordUpsertDto): Promise<void> {
+  async upsertKeywords(items: KeywordUpsertDto[]): Promise<void> {
+    const data = items.map((i) => this.transform(i));
     await this.prisma.$transaction(async (tx) => {
-      for (const row of items) {
+      for (const row of data) {
         await tx.keyword.upsert({
           where: {
             criterionId_adGroupId: {
@@ -71,7 +85,7 @@ export class KeywordService implements IKeywordService {
               adGroupId: row.adGroupId,
             },
           },
-          update: { keyword: row.keyword },
+          update: { keyword: row.keyword, status: row.status },
           create: row,
         });
       }

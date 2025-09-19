@@ -31,5 +31,5 @@ keywordRouter
     ctrl.getScores,
   )
   .get("/:id", validateParams(intIdParamSchema), ctrl.getById)
-  .post("/", validateBody(keywordUpsertSchema), ctrl.upsert)
+  .post("/", validateBody(keywordUpsertSchema.array()), ctrl.upsert)
   .post("/scores", ctrl.setScores);
