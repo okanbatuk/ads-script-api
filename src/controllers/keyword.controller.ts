@@ -8,6 +8,7 @@ import type { IKeywordService } from "../interfaces/index.js";
 import type {
   DaysQueryDto,
   IntIdParamDto,
+  KeywordBulkBodyDto,
   KeywordSetScoreDto,
   KeywordUpsertDto,
 } from "../schemas/index.js";
@@ -33,7 +34,7 @@ export class KeywordController {
 
   // GET /api/keywords/bulkscores?days=7
   getBulkScores = async (req: Request, res: Response): Promise<Response> => {
-    const { ids } = req.body;
+    const { ids }: KeywordBulkBodyDto = req.body;
     const { days } = req.validatedQuery as DaysQueryDto;
     const result = await this.service.getBulkKeywordScores(ids, days);
     return sendResponse(
@@ -59,7 +60,7 @@ export class KeywordController {
 
   // POST /api/keywords
   upsert = async (req: Request, res: Response): Promise<Response> => {
-    const items: KeywordUpsertDto = req.body;
+    const items: KeywordUpsertDto[] = req.body;
     await this.service.upsertKeywords(items);
     return sendResponse(res, 204, null, "Keywords upserted successfully.");
   };

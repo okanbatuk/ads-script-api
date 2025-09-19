@@ -14,7 +14,7 @@ export class KeywordService implements IKeywordService {
     @inject(TYPES.PrismaClient) private readonly prisma: PrismaClient,
   ) {}
 
-  transform = (row: KeywordUpsertDto): Keyword => {
+  transform = (row: KeywordUpsertDto): Omit<Keyword, "id"> => {
     const entries = Object.entries(row).map(([key, value]) => {
       if (key === "status") {
         const upper = (value as string).toUpperCase();

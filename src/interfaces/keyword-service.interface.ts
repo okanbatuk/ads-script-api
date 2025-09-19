@@ -1,4 +1,4 @@
-import { KeywordUpsertDto } from "../schemas/index.js";
+import type { KeywordUpsertDto } from "../schemas/index.js";
 import type { KeywordDto, KeywordScoreDto } from "../dtos/index.js";
 
 export interface IKeywordService {

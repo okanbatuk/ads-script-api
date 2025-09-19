@@ -5,6 +5,7 @@ import { sendResponse } from "../utils/index.js";
 import { ApiError } from "../errors/api.error.js";
 
 import type {
+  AdGroupBulkBodyDto,
   AdGroupScoresDto,
   AdGroupUpsertDto,
   BigIntIdParamDto,
@@ -34,8 +35,7 @@ export class AdGroupController {
 
   // GET /api/adgroups/bulkscores?days=7
   getBulkScores = async (req: Request, res: Response): Promise<Response> => {
-    // TODO: add validateBody middleware to route
-    const { ids } = req.body;
+    const { ids }: AdGroupBulkBodyDto = req.body;
     const { days = 7 } = req.validatedQuery as DaysQueryDto;
     const result = await this.service.getBulkAdGroupScores(ids, days);
     return sendResponse(
@@ -66,6 +66,7 @@ export class AdGroupController {
     return sendResponse(res, 204, null, "Ad Groups upserted successfully.");
   };
 
+  // POST /api/adgroups/scores
   setScores = async (req: Request, res: Response): Promise<Response> => {
     const { adGroupIds, date }: AdGroupScoresDto = req.body;
 
