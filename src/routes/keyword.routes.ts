@@ -1,7 +1,4 @@
 import { Router } from "express";
-import { KeywordController } from "../controllers/index.js";
-import { TYPES } from "../types/index.js";
-import { container } from "../container/container.js";
 import {
   validateBody,
   validateParams,
@@ -11,9 +8,14 @@ import {
   keywordBulkBodySchema,
   intIdParamSchema,
   keywordUpsertSchema,
+  keywordScoresSchema,
 } from "../schemas/index.js";
+import { TYPES } from "../types/index.js";
+import { asyncHandler } from "../utils/index.js";
+import { container } from "../container/container.js";
+import { KeywordController } from "../controllers/index.js";
 
-export const keywordRouter = Router();
+export const keywordRouter = Router({ mergeParams: true });
 
 const ctrl = container.get<KeywordController>(TYPES.KeywordController);
 
@@ -22,14 +24,22 @@ keywordRouter
     "/bulkscores",
     validateQuery,
     validateBody(keywordBulkBodySchema),
-    ctrl.getBulkScores,
+    asyncHandler(ctrl.getBulkScores),
   )
   .get(
     "/:id/scores",
     validateParams(intIdParamSchema),
     validateQuery,
-    ctrl.getScores,
+    asyncHandler(ctrl.getScores),
   )
-  .get("/:id", validateParams(intIdParamSchema), ctrl.getById)
-  .post("/", validateBody(keywordUpsertSchema.array()), ctrl.upsert)
-  .post("/scores", ctrl.setScores);
+  .get("/:id", validateParams(intIdParamSchema), asyncHandler(ctrl.getById))
+  .post(
+    "/",
+    validateBody(keywordUpsertSchema.array()),
+    asyncHandler(ctrl.upsert),
+  )
+  .post(
+    "/scores",
+    validateBody(keywordScoresSchema),
+    asyncHandler(ctrl.setScores),
+  );

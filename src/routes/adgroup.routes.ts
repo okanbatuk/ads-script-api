@@ -13,6 +13,7 @@ import {
 } from "../schemas/index.js";
 import { TYPES } from "../types/index.js";
 import { container } from "../container/container.js";
+import { asyncHandler } from "../utils/async-handler.js";
 import { AdGroupController } from "../controllers/index.js";
 
 export const adGroupRouter = Router();
@@ -23,7 +24,7 @@ adGroupRouter.get(
   "/:id/scores",
   validateParams(bigIntIdParamSchema),
   validateQuery,
-  ctrl.getScores,
+  asyncHandler(ctrl.getScores),
 );
 
 /* GET /api/adgroups/bulkscores?days=7 */
@@ -31,18 +32,26 @@ adGroupRouter.get(
   "/bulkscores",
   validateQuery,
   validateBody(adGroupBulkBodySchema),
-  ctrl.getBulkScores,
+  asyncHandler(ctrl.getBulkScores),
 );
 
 /* GET /api/adgroups/:id */
-adGroupRouter.get("/:id", validateParams(bigIntIdParamSchema), ctrl.getById);
+adGroupRouter.get(
+  "/:id",
+  validateParams(bigIntIdParamSchema),
+  asyncHandler(ctrl.getById),
+);
 
 /* POST /api/adgroups */
-adGroupRouter.post("/", validateBody(adGroupUpsertSchema.array()), ctrl.upsert);
+adGroupRouter.post(
+  "/",
+  validateBody(adGroupUpsertSchema.array()),
+  asyncHandler(ctrl.upsert),
+);
 
 /* POST /api/adgroups/scores */
 adGroupRouter.post(
   "/scores",
   validateBody(adGroupScoresSchema),
-  ctrl.setScores,
+  asyncHandler(ctrl.setScores),
 );
