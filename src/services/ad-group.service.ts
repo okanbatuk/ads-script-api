@@ -2,8 +2,8 @@ import { inject, injectable } from "inversify";
 import { startOfDay, subDays } from "date-fns";
 import { TYPES } from "../types/index.js";
 import {
-  AdGroup,
-  AdGroupScore,
+  type AdGroup,
+  type AdGroupScore,
   Prisma,
   PrismaClient,
   Status,
@@ -12,6 +12,7 @@ import { AdGroupMapper, AdGroupScoreMapper } from "../mappers/index.js";
 
 import type { IAdGroupService } from "../interfaces/index.js";
 import type { AdGroupDto, AdGroupScoreDto } from "../dtos/index.js";
+import type { AdGroupUpsertDto } from "../schemas/index.js";
 
 @injectable()
 export class AdGroupService implements IAdGroupService {
@@ -19,11 +20,8 @@ export class AdGroupService implements IAdGroupService {
     @inject(TYPES.PrismaClient) private readonly prisma: PrismaClient,
   ) {}
 
-  transform = (row: AdGroupDto): AdGroup => {
+  transform = (row: AdGroupUpsertDto): AdGroup => {
     const entries = Object.entries(row).map(([key, value]) => {
-      if (key === "id" || key === "campaignId")
-        return [key, BigInt(value as string)];
-
       if (key === "status") {
         const upper = (value as string).toUpperCase();
         return Object.values(Status).includes(upper as Status)
@@ -74,7 +72,7 @@ export class AdGroupService implements IAdGroupService {
     return raw ? AdGroupMapper.toDto(raw) : null;
   }
 
-  async upsertAdGroups(items: AdGroupDto[]): Promise<void> {
+  async upsert(items: AdGroupUpsertDto[]): Promise<void> {
     const data = items.map((i) => this.transform(i));
 
     await this.prisma.$transaction(async (tx) => {

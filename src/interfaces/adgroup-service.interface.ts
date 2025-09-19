@@ -1,4 +1,5 @@
-import type { AdGroupDto, AdGroupScoreDto } from "../dtos";
+import { AdGroupUpsertDto } from "../schemas/index.js";
+import type { AdGroupDto, AdGroupScoreDto } from "../dtos/index.js";
 
 export interface IAdGroupService {
   getAdGroupScores(
@@ -19,7 +20,7 @@ export interface IAdGroupService {
 
   getById(adGroupId: bigint): Promise<AdGroupDto | null>;
 
-  upsertAdGroups(items: AdGroupDto[]): Promise<void>;
+  upsert(items: AdGroupUpsertDto[]): Promise<void>;
 
   setAdGroupScores(adGroupIds: bigint[], date: Date): Promise<void>;
 }
