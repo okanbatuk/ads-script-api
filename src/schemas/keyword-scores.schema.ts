@@ -1,0 +1,16 @@
+import { z } from "zod";
+
+export const keywordScoresSchema = z.array(
+  z.object({
+    keywordId: z.number(),
+    date: z
+      .string()
+      .transform((str) => new Date(str))
+      .refine((d) => !isNaN(d.getTime()), {
+        message: `Invalid date string`,
+      }),
+    qs: z.number(),
+  }),
+);
+
+export type KeywordSetScoreDto = z.infer<typeof keywordScoresSchema>;

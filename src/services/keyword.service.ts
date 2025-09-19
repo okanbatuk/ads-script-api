@@ -4,8 +4,9 @@ import { TYPES } from "../types/index.js";
 import { Prisma, PrismaClient } from "../models/prisma.js";
 import { KeywordMapper, KeywordScoreMapper } from "../mappers/index.js";
 
-import type { IKeywordService } from "../interfaces/index.js";
 import type { KeywordDto, KeywordScoreDto } from "../dtos/index.js";
+import type { IKeywordService } from "../interfaces/index.js";
+import type { KeywordSetScoreDto, KeywordUpsertDto } from "../schemas/index.js";
 
 @injectable()
 export class KeywordService implements IKeywordService {
@@ -60,15 +61,9 @@ export class KeywordService implements IKeywordService {
     return row ? KeywordMapper.toDto(row) : null;
   }
 
-  async upsertKeywords(items: KeywordDto[]): Promise<void> {
-    const data = items.map((i) => ({
-      criterionId: BigInt(i.criterionId),
-      keyword: i.keyword,
-      adGroupId: BigInt(i.adGroupId),
-    }));
-
+  async upsertKeywords(items: KeywordUpsertDto): Promise<void> {
     await this.prisma.$transaction(async (tx) => {
-      for (const row of data) {
+      for (const row of items) {
         await tx.keyword.upsert({
           where: {
             criterionId_adGroupId: {
@@ -83,13 +78,7 @@ export class KeywordService implements IKeywordService {
     });
   }
 
-  async setKeywordScores(
-    scores: {
-      keywordId: number;
-      date: Date;
-      qs: number;
-    }[],
-  ): Promise<void> {
+  async setKeywordScores(scores: KeywordSetScoreDto): Promise<void> {
     await this.prisma.keywordScore.createMany({
       data: scores,
       skipDuplicates: true,

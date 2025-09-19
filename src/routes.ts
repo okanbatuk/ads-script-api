@@ -2,7 +2,6 @@ import { Router, Request, Response, NextFunction } from "express";
 import {
   CampaignController,
   AdGroupController,
-  KeywordController,
   AccountController,
 } from "./controllers/index.js";
 import { TYPES } from "./types/index.js";
@@ -10,13 +9,15 @@ import { Database } from "./database/index.js";
 import { sendResponse } from "./utils/index.js";
 import { ApiError } from "./errors/api.error.js";
 import { container } from "./container/container.js";
+import { keywordRouter } from "./routes/index.js";
 
 const router = Router();
 
 const accCtrl = container.get<AccountController>(TYPES.AccountController);
 const cmpgnCtrl = container.get<CampaignController>(TYPES.CampaignController);
 const adgrpCtrl = container.get<AdGroupController>(TYPES.AdGroupController);
-const kwCtrl = container.get<KeywordController>(TYPES.KeywordController);
+
+router.use("/keywords", keywordRouter);
 
 router
   .get("/error", async (_req: Request, _res: Response, next: NextFunction) => {
@@ -38,12 +39,8 @@ router
   .get("/campaign/count", cmpgnCtrl.getCampaignCount)
   .get("/adgroup/:id", adgrpCtrl.getAdGroupsByCampaign)
   .get("/adgroup/:id/count", adgrpCtrl.getAdGroupCount)
-  .get("/keyword/:id", kwCtrl.getKeywordsByFilter)
-  .get("/keyword/:id/date", kwCtrl.getDate)
   .post("/account", accCtrl.create)
   .post("/campaign", cmpgnCtrl.upsert)
-  .post("/adgroup", adgrpCtrl.upsert)
-  .post("/keyword", kwCtrl.upsert)
-  .delete("/keyword/:id", kwCtrl.delete);
+  .post("/adgroup", adgrpCtrl.upsert);
 
 export default router;

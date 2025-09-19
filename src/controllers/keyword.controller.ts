@@ -1,10 +1,16 @@
 import { inject, injectable } from "inversify";
 import { Request, Response } from "express";
 import { TYPES } from "../types/index.js";
-import { Prisma } from "../models/prisma.js";
 import { sendResponse } from "../utils/index.js";
-import { KeywordFilter, SortDto } from "../dtos/index.js";
+import { ApiError } from "../errors/api.error.js";
+
 import type { IKeywordService } from "../interfaces/index.js";
+import type {
+  DaysQueryDto,
+  IntIdParamDto,
+  KeywordSetScoreDto,
+  KeywordUpsertDto,
+} from "../schemas/index.js";
 
 @injectable()
 export class KeywordController {
@@ -12,86 +18,56 @@ export class KeywordController {
     @inject(TYPES.KeywordService) private readonly service: IKeywordService,
   ) {}
 
-  resolveQuery = (query: any) => {
-    const { limit, page, ...rest } = query;
-
-    if (rest.start) rest.start = new Date(rest.start);
-    if (rest.end) rest.end = new Date(rest.end);
-
-    const search = Object.fromEntries(
-      Object.entries(rest).filter(([, v]) => v !== undefined),
-    ) as Omit<KeywordFilter, "id">;
-
-    // type KeywordOrderField = keyof Prisma.KeywordOrderByWithRelationInput;
-
-    // const allowed: ("keyword" | "avgQs")[] = ["keyword", "avgQs"];
-
-    // let sortObj: SortDto | undefined;
-
-    // if (typeof sort === "string") {
-    //   const [rawField, dir] = sort.split(":");
-    //   if (allowed.includes(rawField as any)) {
-    //     sortObj = {
-    //       field: rawField as "keyword" | "avgQs",
-    //       direction: dir === "desc" ? "desc" : "asc",
-    //     };
-    //   }
-    // }
-
-    const limitNum = Math.max(1, Number(limit) || 50);
-    const pageNum = Math.max(1, Number(page) || 1);
-    const offset = (pageNum - 1) * limitNum;
-
-    return {
-      pagination: { limit: limitNum, offset },
-      // sort: sortObj,
-      search,
-    };
-  };
-
-  getKeywordsByFilter = async (
-    req: Request,
-    res: Response,
-  ): Promise<Response> => {
-    const { pagination, search } = this.resolveQuery(req.query);
-    const filter: KeywordFilter = {
-      ...search,
-      adGroupId: BigInt(req.params.id),
-    };
-
-    const result = await this.service.getKeywordsByFilter(filter, pagination);
+  // GET /api/keywords/:id/scores?days=7
+  getScores = async (req: Request, res: Response): Promise<Response> => {
+    const { id } = req.validatedParams as IntIdParamDto;
+    const { days = 7 } = req.validatedQuery as DaysQueryDto;
+    const result = await this.service.getKeywordScores(id, days);
     return sendResponse(
       res,
       200,
       result,
-      "All filtered keywords successfully retrieved.",
+      `All score records for Keyword ID: ${id} on ${days} days have been successfully retrieved.`,
     );
   };
 
-  getDate = async (req: Request, res: Response): Promise<Response> => {
-    const result = await this.service.getDate(req.params.id);
+  // GET /api/keywords/bulkscores?days=7
+  getBulkScores = async (req: Request, res: Response): Promise<Response> => {
+    const { ids } = req.body;
+    const { days } = req.validatedQuery as DaysQueryDto;
+    const result = await this.service.getBulkKeywordScores(ids, days);
     return sendResponse(
       res,
       200,
-      { date: result },
-      "Date information of the last added keywords has been retrieved.",
+      result,
+      `Bulk scores for ${ids.length} keyword(s) over ${days} day(s) retrieved.`,
     );
   };
 
-  upsert = async (req: Request, res: Response): Promise<Response> => {
-    console.log(`------- UPSERT KEYWORDS --------`);
-    await this.service.upsert(req.body);
+  // GET /api/keywords/:id
+  getById = async (req: Request, res: Response): Promise<Response> => {
+    const { id } = req.validatedParams as IntIdParamDto;
+    const dto = await this.service.getByKeywordId(id);
+    if (!dto) throw new ApiError(`Keyword with ID: ${id} not found!`);
     return sendResponse(
       res,
-      201,
-      undefined,
-      "Keywords created successfully retrieved.",
+      200,
+      dto,
+      `Keyword with ID: ${id} retrieved successfully.`,
     );
   };
 
-  delete = async (req: Request, res: Response): Promise<Response> => {
-    console.log("--------- DELETE KEYWORDS BY AD-GROUP ----------");
-    await this.service.delete(req.params.id);
-    return sendResponse(res, 200, undefined, "Keywords deleted successfully!");
+  // POST /api/keywords
+  upsert = async (req: Request, res: Response): Promise<Response> => {
+    const items: KeywordUpsertDto = req.body;
+    await this.service.upsertKeywords(items);
+    return sendResponse(res, 204, null, "Keywords upserted successfully.");
+  };
+
+  // POST /api/keywords/scores
+  setScores = async (req: Request, res: Response): Promise<Response> => {
+    const scores: KeywordSetScoreDto = req.body;
+    await this.service.setKeywordScores(scores);
+    return sendResponse(res, 204, null, "Keywords scores set successfully.");
   };
 }
