@@ -24,7 +24,7 @@ export async function buildApp() {
   app.use(logger);
   app.get("/", async (req: Request, res: Response): Promise<Response> => {
     console.log("Root route hit!");
-    return sendResponse(res, 200, undefined, "Ads API working on Vercel!");
+    return sendResponse(res, 200, undefined, "Ads API working on Server!");
   });
   app.use("/api", router);
   app.use(errorHandler);

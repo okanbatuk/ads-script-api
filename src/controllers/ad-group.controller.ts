@@ -9,7 +9,6 @@ import type {
   AdGroupScoresDto,
   AdGroupUpsertDto,
   BigIntIdParamDto,
-  DaysQueryDto,
 } from "../schemas/index.js";
 import type { IAdGroupService } from "../interfaces/index.js";
 
@@ -22,7 +21,7 @@ export class AdGroupController {
   // GET /api/adgroups/:id/scores?days=7
   getScores = async (req: Request, res: Response): Promise<Response> => {
     const { id } = req.validatedParams as BigIntIdParamDto;
-    const { days = 7 } = req.validatedQuery as DaysQueryDto;
+    const days = Number(req.validatedQuery?.days ?? "7");
 
     const result = await this.service.getAdGroupScores(id, days);
     return sendResponse(
@@ -36,7 +35,7 @@ export class AdGroupController {
   // GET /api/adgroups/bulkscores?days=7
   getBulkScores = async (req: Request, res: Response): Promise<Response> => {
     const { ids }: AdGroupBulkBodyDto = req.body;
-    const { days = 7 } = req.validatedQuery as DaysQueryDto;
+    const days = Number(req.validatedQuery?.days ?? "7");
     const result = await this.service.getBulkAdGroupScores(ids, days);
     return sendResponse(
       res,
