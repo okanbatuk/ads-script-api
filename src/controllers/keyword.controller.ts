@@ -6,7 +6,7 @@ import { ApiError } from "../errors/api.error.js";
 
 import type { IKeywordService } from "../interfaces/index.js";
 import type {
-  IntBulkDto,
+  DaysQueryDto,
   IntIdParamDto,
   KeywordSetScoreDto,
   KeywordUpsertDto,
@@ -19,15 +19,11 @@ export class KeywordController {
   ) {}
 
   // GET /api/keywords/:id/scores?days=7
-  getScores = async (
-    req: IdAndDaysRequest<IntIdParamDto>,
-    res: Response,
-  ): Promise<void> => {
-    const result = await this.service.getKeywordScores(
-      req.validatedParams.id,
-      req.validatedQuery.days,
-    );
-    sendResponse(
+  getScores = async (req: Request, res: Response): Promise<Response> => {
+    const { id } = req.validatedParams as IntIdParamDto;
+    const { days = 7 } = req.validatedQuery as DaysQueryDto;
+    const result = await this.service.getKeywordScores(id, days);
+    return sendResponse(
       res,
       200,
       result,
@@ -36,15 +32,11 @@ export class KeywordController {
   };
 
   // GET /api/keywords/bulkscores?days=7
-  getBulkScores = async (
-    req: DaysAndBodyRequest<IntBulkDto>,
-    res: Response,
-  ): Promise<void> => {
-    const result = await this.service.getBulkKeywordScores(
-      req.body.ids,
-      req.validatedQuery.days,
-    );
-    sendResponse(
+  getBulkScores = async (req: Request, res: Response): Promise<Response> => {
+    const { ids }: KeywordBulkBodyDto = req.body;
+    const { days } = req.validatedQuery as DaysQueryDto;
+    const result = await this.service.getBulkKeywordScores(ids, days);
+    return sendResponse(
       res,
       200,
       result,
@@ -53,17 +45,11 @@ export class KeywordController {
   };
 
   // GET /api/keywords/:id
-  getById = async (
-    req: IdOnlyRequest<IntIdParamDto>,
-    res: Response,
-  ): Promise<void> => {
-    const dto = await this.service.getByKeywordId(req.validatedParams.id);
-    if (!dto)
-      throw new ApiError(
-        `Keyword with ID: ${req.validatedParams.id} not found!`,
-        404,
-      );
-    sendResponse(
+  getById = async (req: Request, res: Response): Promise<Response> => {
+    const { id } = req.validatedParams as IntIdParamDto;
+    const dto = await this.service.getByKeywordId(id);
+    if (!dto) throw new ApiError(`Keyword with ID: ${id} not found!`);
+    return sendResponse(
       res,
       200,
       dto,
@@ -72,20 +58,16 @@ export class KeywordController {
   };
 
   // POST /api/keywords
-  upsert = async (
-    req: BodyOnlyRequest<KeywordUpsertDto[]>,
-    res: Response,
-  ): Promise<void> => {
-    await this.service.upsertKeywords(req.body);
-    sendResponse(res, 204, null, "Keywords upserted successfully.");
+  upsert = async (req: Request, res: Response): Promise<Response> => {
+    const items: KeywordUpsertDto[] = req.body;
+    await this.service.upsertKeywords(items);
+    return sendResponse(res, 204, null, "Keywords upserted successfully.");
   };
 
   // POST /api/keywords/scores
-  setScores = async (
-    req: BodyOnlyRequest<KeywordSetScoreDto>,
-    res: Response,
-  ): Promise<void> => {
-    await this.service.setKeywordScores(req.body);
-    sendResponse(res, 204, null, "Keywords scores set successfully.");
+  setScores = async (req: Request, res: Response): Promise<Response> => {
+    const scores: KeywordSetScoreDto = req.body;
+    await this.service.setKeywordScores(scores);
+    return sendResponse(res, 204, null, "Keywords scores set successfully.");
   };
 }

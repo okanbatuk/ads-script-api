@@ -9,6 +9,8 @@ import {
   keywordUpsertSchema,
   keywordScoresSchema,
   intBulkSchema,
+  IntBulkDto,
+  DaysQueryDto,
 } from "../schemas/index.js";
 import { TYPES } from "../types/index.js";
 import { asyncHandler } from "../utils/index.js";
@@ -24,22 +26,14 @@ keywordRouter
     "/bulkscores",
     validateQuery,
     validateBody(intBulkSchema),
-    asyncHandler(ctrl.getBulkScores),
+    ctrl.getBulkScores,
   )
   .get(
     "/:id/scores",
     validateParams(intIdParamSchema),
     validateQuery,
-    asyncHandler(ctrl.getScores),
+    ctrl.getScores,
   )
-  .get("/:id", validateParams(intIdParamSchema), asyncHandler(ctrl.getById))
-  .post(
-    "/",
-    validateBody(keywordUpsertSchema.array()),
-    asyncHandler(ctrl.upsert),
-  )
-  .post(
-    "/scores",
-    validateBody(keywordScoresSchema),
-    asyncHandler(ctrl.setScores),
-  );
+  .get("/:id", validateParams(intIdParamSchema), ctrl.getById)
+  .post("/", validateBody(keywordUpsertSchema.array()), ctrl.upsert)
+  .post("/scores", validateBody(keywordScoresSchema), ctrl.setScores);

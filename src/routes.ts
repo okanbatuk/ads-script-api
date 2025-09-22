@@ -1,10 +1,20 @@
 import { Router, Request, Response, NextFunction } from "express";
+import {
+  CampaignController,
+  AdGroupController,
+  AccountController,
+} from "./controllers/index.js";
+import { TYPES } from "./types/index.js";
 import { Database } from "./database/index.js";
 import { sendResponse } from "./utils/index.js";
 import { ApiError } from "./errors/api.error.js";
+import { container } from "./container/container.js";
 import { adGroupRouter, keywordRouter } from "./routes/index.js";
 
 const router = Router();
+
+const accCtrl = container.get<AccountController>(TYPES.AccountController);
+const cmpgnCtrl = container.get<CampaignController>(TYPES.CampaignController);
 
 router.use("/keywords", keywordRouter);
 router.use("/adgroups", adGroupRouter);
@@ -24,5 +34,10 @@ router
       ? sendResponse(res, 200, undefined, "Database connection established!")
       : sendResponse(res, 503, undefined, "Failed!");
   });
+// .get("/account", accCtrl.getAll)
+// .get("/campaign/:id", cmpgnCtrl.getCampaignsByAccount)
+// .get("/campaign/count", cmpgnCtrl.getCampaignCount)
+// .post("/account", accCtrl.create)
+// .post("/campaign", cmpgnCtrl.upsert);
 
 export default router;

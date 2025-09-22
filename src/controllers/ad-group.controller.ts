@@ -9,6 +9,7 @@ import type {
   AdGroupUpsertDto,
   BigIntBulkDto,
   BigIntIdParamDto,
+  DaysQueryDto,
 } from "../schemas/index.js";
 import type { IAdGroupService } from "../interfaces/index.js";
 
@@ -19,14 +20,11 @@ export class AdGroupController {
   ) {}
 
   // GET /api/adgroups/:id/scores?days=7
-  getScores = async (
-    req: IdAndDaysRequest<BigIntIdParamDto>,
-    res: Response,
-  ): Promise<Response> => {
-    const result = await this.service.getAdGroupScores(
-      req.validatedParams.id,
-      req.validatedQuery.days,
-    );
+  getScores = async (req: Request, res: Response): Promise<Response> => {
+    const { id } = req.validatedParams as BigIntIdParamDto;
+    const { days = 7 } = req.validatedQuery as DaysQueryDto;
+
+    const result = await this.service.getAdGroupScores(id, days);
     return sendResponse(
       res,
       200,
@@ -36,14 +34,10 @@ export class AdGroupController {
   };
 
   // GET /api/adgroups/bulkscores?days=7
-  getBulkScores = async (
-    req: DaysAndBodyRequest<BigIntBulkDto>,
-    res: Response,
-  ): Promise<Response> => {
-    const result = await this.service.getBulkAdGroupScores(
-      req.body.ids,
-      req.validatedQuery.days,
-    );
+  getBulkScores = async (req: Request, res: Response): Promise<Response> => {
+    const { ids }: AdGroupBulkBodyDto = req.body;
+    const { days = 7 } = req.validatedQuery as DaysQueryDto;
+    const result = await this.service.getBulkAdGroupScores(ids, days);
     return sendResponse(
       res,
       200,
