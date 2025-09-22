@@ -12,6 +12,7 @@ import { AccountMapper, AccountScoreMapper } from "../mappers/index.js";
 
 import type { IAccountService } from "../interfaces/index.js";
 import type { AccountDto, AccountScoreDto } from "../dtos/index.js";
+import { AccountUpsertDto } from "src/schemas/account-upsert.schema.js";
 
 @injectable()
 export class AccountService implements IAccountService {
@@ -19,9 +20,8 @@ export class AccountService implements IAccountService {
     @inject(TYPES.PrismaClient) private readonly prisma: PrismaClient,
   ) {}
 
-  transform = (row: AccountDto): Account => {
+  transform = (row: AccountUpsertDto): Account => {
     const entries = Object.entries(row).map(([key, value]) => {
-      if (key === "id") return [key, BigInt(value as string)];
       if (key === "status") {
         const upper = (value as string).toUpperCase();
         return Object.values(AccountStatus).includes(upper as AccountStatus)
@@ -74,7 +74,7 @@ export class AccountService implements IAccountService {
     return raw ? AccountMapper.toDto(raw) : null;
   }
 
-  async upsertAccounts(items: AccountDto[]): Promise<void> {
+  async upsert(items: AccountUpsertDto[]): Promise<void> {
     const data = items.map((i) => this.transform(i));
 
     await this.prisma.$transaction(async (tx) => {

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { DaysQueryDto, daysQuerySchema } from "../schemas/index.js";
+import { daysQuerySchema } from "../schemas/index.js";
 
 export const validateQuery = (
   req: Request,
@@ -7,7 +7,7 @@ export const validateQuery = (
   next: NextFunction,
 ): void => {
   try {
-    req.validatedQuery = daysQuerySchema.parse(req.query) as DaysQueryDto;
+    req.validatedQuery = daysQuerySchema.parse(req.query);
     next();
   } catch (err) {
     next(err);

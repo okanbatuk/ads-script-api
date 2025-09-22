@@ -1,0 +1,41 @@
+import { Request, Response } from "express";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../types/index.js";
+import { sendResponse } from "../utils/index.js";
+import { IGlobalScoreService } from "../interfaces/index.js";
+
+import type { ScoreDateDto } from "../schemas/index.js";
+
+@injectable()
+export class GlobalScoreController {
+  constructor(
+    @inject(TYPES.GlobalScoreService)
+    private readonly service: IGlobalScoreService,
+  ) {}
+
+  // GET /api/global?days=7
+  public getGlobalTrend = async (
+    req: GetGlobalTrend,
+    res: Response,
+  ): Promise<void> => {
+    const { days } = req.validatedQuery;
+    const result = await this.service.getGlobalTrend(days);
+    sendResponse(
+      res,
+      200,
+      result,
+      `Global quality score trend for ${days} day(s) retrieved successfully.`,
+    );
+  };
+
+  // SET /api/global
+  public setGlobalScore = async (
+    req: Request,
+    res: Response,
+  ): Promise<void> => {
+    const { date } = req.body;
+    const dateObj = new Date(date);
+    await this.service.setGlobalScore(dateObj);
+    sendResponse(res, 204, null, "Global score set successfully.");
+  };
+}

@@ -6,6 +6,7 @@ export const daysQuerySchema = z.object({
     .int()
     .positive()
     .refine((n) => n > 0, { message: "days must be > 0" })
+    .optional()
     .default(7),
 });
 

@@ -1,4 +1,5 @@
 export const TYPES = {
+  GlobalScoreController: Symbol.for("GlobalScoreController"),
   AccountController: Symbol.for("AccountController"),
   CampaignController: Symbol.for("CampaignController"),
   AdGroupController: Symbol.for("AdGroupController"),

@@ -1,10 +1,7 @@
-import type { IdParamDto, DaysQueryDto } from "../schemas/index.js";
+import type { DaysQueryDto } from "../schemas/index.js";
 
-declare global {
-  namespace Express {
-    interface Request {
-      validatedParams?: unknown;
-      validatedQuery?: DaysQueryDto;
-    }
+declare module "express-serve-static-core" {
+  interface Request {
+    validatedQuery: DaysQueryDto;
   }
 }

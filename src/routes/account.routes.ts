@@ -1,5 +1,7 @@
-// src/routes/adGroup.routes.ts
 import { Response, Router } from "express";
+import { TYPES } from "../types/index.js";
+import { AccountController } from "../controllers/index.js";
+import { container } from "../container/container.js";
 import {
   validateBody,
   validateParams,
@@ -7,21 +9,18 @@ import {
 } from "../middleware/index.js";
 import {
   bigIntIdParamSchema,
-  adGroupUpsertSchema,
-  adGroupScoresSchema,
+  accountUpsertSchema,
+  accountScoresSchema,
   bigIntBulkSchema,
   BigIntIdParamDto,
   BigIntBulkDto,
 } from "../schemas/index.js";
-import { TYPES } from "../types/index.js";
-import { container } from "../container/container.js";
-import { AdGroupController } from "../controllers/index.js";
 
-export const adGroupRouter = Router();
-const ctrl = container.get<AdGroupController>(TYPES.AdGroupController);
+export const accountRouter = Router({ mergeParams: true });
+const ctrl = container.get<AccountController>(TYPES.AccountController);
 
-/* GET /api/adgroups/:id/scores?days=7 */
-adGroupRouter.get(
+/* GET /api/accounts/:id/scores?days=7 */
+accountRouter.get(
   "/:id/scores",
   validateParams(bigIntIdParamSchema),
   validateQuery,
@@ -30,8 +29,8 @@ adGroupRouter.get(
   },
 );
 
-/* GET /api/adgroups/:id */
-adGroupRouter.get(
+/* GET /api/accounts/:id */
+accountRouter.get(
   "/:id",
   validateParams(bigIntIdParamSchema),
   async (req: any, res: Response) => {
@@ -39,18 +38,18 @@ adGroupRouter.get(
   },
 );
 
-/* POST /api/adgroups */
-adGroupRouter.post("/", validateBody(adGroupUpsertSchema.array()), ctrl.upsert);
+/* POST /api/accounts */
+accountRouter.post("/", validateBody(accountUpsertSchema.array()), ctrl.upsert);
 
-/* POST /api/adgroups/scores */
-adGroupRouter.post(
+/* POST /api/accounts/scores */
+accountRouter.post(
   "/scores",
-  validateBody(adGroupScoresSchema),
+  validateBody(accountScoresSchema),
   ctrl.setScores,
 );
 
-/* POST /api/adgroups/bulkscores?days=7 */
-adGroupRouter.post(
+/* POST /api/accounts/bulkscores?days=7 */
+accountRouter.post(
   "/bulkscores",
   validateQuery,
   validateBody(bigIntBulkSchema),

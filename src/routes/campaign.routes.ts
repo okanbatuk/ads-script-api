@@ -1,17 +1,18 @@
-import { Router } from "express";
+import { Response, Router } from "express";
 import {
   validateBody,
   validateParams,
   validateQuery,
 } from "../middleware/index.js";
 import {
+  BigIntBulkDto,
   bigIntBulkSchema,
+  BigIntIdParamDto,
   bigIntIdParamSchema,
   campaignScoresSchema,
   campaignUpsertSchema,
 } from "../schemas/index.js";
 import { TYPES } from "../types/index.js";
-import { asyncHandler } from "../utils/index.js";
 import { CampaignController } from "../controllers/index.js";
 import { container } from "../container/container.js";
 
@@ -24,34 +25,40 @@ campaignRouter.get(
   "/:id/scores",
   validateParams(bigIntIdParamSchema),
   validateQuery,
-  asyncHandler(ctrl.getScores),
-);
-
-// GET /api/campaigns/bulkscores?days=7
-campaignRouter.get(
-  "/bulkscores",
-  validateQuery,
-  validateBody(bigIntBulkSchema),
-  asyncHandler(ctrl.getBulkScores),
+  async (req: any, res: Response) => {
+    await ctrl.getScores(req as GetScoresRequest<BigIntIdParamDto>, res);
+  },
 );
 
 // GET /api/campaigns/:id
 campaignRouter.get(
   "/:id",
   validateParams(bigIntIdParamSchema),
-  asyncHandler(ctrl.getById),
+  async (req: any, res: Response) => {
+    await ctrl.getById(req as GetByIdRequest<BigIntIdParamDto>, res);
+  },
 );
 
 // POST /api/campaigns  (upsert)
 campaignRouter.post(
   "/",
   validateBody(campaignUpsertSchema),
-  asyncHandler(ctrl.upsertCampaigns),
+  ctrl.upsertCampaigns,
 );
 
 // POST /api/campaigns/scores
 campaignRouter.post(
   "/scores",
   validateBody(campaignScoresSchema),
-  asyncHandler(ctrl.setScores),
+  ctrl.setScores,
+);
+
+// POST /api/campaigns/bulkscores?days=7
+campaignRouter.post(
+  "/bulkscores",
+  validateQuery,
+  validateBody(bigIntBulkSchema),
+  async (req: any, res: Response) => {
+    await ctrl.getBulkScores(req as GetBulkScoresRequest<BigIntBulkDto>, res);
+  },
 );

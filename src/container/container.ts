@@ -5,6 +5,7 @@ import {
   CampaignController,
   AdGroupController,
   KeywordController,
+  GlobalScoreController,
 } from "../controllers/index.js";
 import {
   AccountService,
@@ -47,6 +48,10 @@ container
   .to(KeywordService)
   .inSingletonScope();
 
+container
+  .bind<GlobalScoreController>(TYPES.GlobalScoreController)
+  .to(GlobalScoreController)
+  .inSingletonScope();
 container
   .bind<AccountController>(TYPES.AccountController)
   .to(AccountController)

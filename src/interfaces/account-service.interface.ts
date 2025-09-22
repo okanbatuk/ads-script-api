@@ -1,5 +1,5 @@
-import type { Account } from "../models/prisma.js";
 import type { AccountDto, AccountScoreDto } from "../dtos/index.js";
+import { AccountUpsertDto } from "../schemas/index.js";
 
 export interface IAccountService {
   getAccountScores(
@@ -20,7 +20,7 @@ export interface IAccountService {
 
   getById(accountId: bigint): Promise<AccountDto | null>;
 
-  upsertAccounts(items: AccountDto[]): Promise<void>;
+  upsert(items: AccountUpsertDto[]): Promise<void>;
 
   setAccountScores(accountIds: bigint[], date: Date): Promise<void>;
 }
