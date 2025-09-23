@@ -40,11 +40,11 @@ export class AdGroupController {
   getById = async (
     req: GetByIdRequest<BigIntIdParamDto>,
     res: Response,
-  ): Promise<Response> => {
+  ): Promise<void> => {
     const { id } = req.validatedParams;
     const dto = await this.service.getById(id);
     if (!dto) throw new ApiError(`Ad Group with ID: ${id} not found!`);
-    return sendResponse(
+    sendResponse(
       res,
       200,
       dto,
@@ -56,32 +56,32 @@ export class AdGroupController {
   upsert = async (
     req: UpsertRequest<AdGroupUpsertDto>,
     res: Response,
-  ): Promise<Response> => {
+  ): Promise<void> => {
     const items = req.body;
     await this.service.upsert(items);
-    return sendResponse(res, 204, null, "Ad Groups upserted successfully.");
+    sendResponse(res, 204, null, "Ad Groups upserted successfully.");
   };
 
   // POST /api/adgroups/scores
   setScores = async (
     req: SetScoresRequest<AdGroupScoresDto>,
     res: Response,
-  ): Promise<Response> => {
+  ): Promise<void> => {
     const { adGroupIds, date } = req.body;
     await this.service.setAdGroupScores(adGroupIds, date);
 
-    return sendResponse(res, 204, null, "Ad Groups scores set successfully.");
+    sendResponse(res, 204, null, "Ad Groups scores set successfully.");
   };
 
   // POST /api/adgroups/bulkscores?days=7
   getBulkScores = async (
     req: GetBulkScoresRequest<BigIntBulkDto>,
     res: Response,
-  ): Promise<Response> => {
+  ): Promise<void> => {
     const { ids } = req.body;
     const days = req.validatedQuery?.days ?? 7;
     const result = await this.service.getBulkAdGroupScores(ids, days);
-    return sendResponse(
+    sendResponse(
       res,
       200,
       result,

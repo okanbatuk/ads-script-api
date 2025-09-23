@@ -1,6 +1,7 @@
-import { CampaignScore } from "@prisma/client";
-import { CampaignScoreDto } from "../dtos/index.js";
 import { formatDate } from "../utils/index.js";
+
+import type { CampaignScore } from "@prisma/client";
+import type { CampaignScoreDto } from "../dtos/index.js";
 
 export class CampaignScoreMapper {
   static toDto(row: CampaignScore): CampaignScoreDto {

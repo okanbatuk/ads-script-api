@@ -39,11 +39,11 @@ export class KeywordController {
   getById = async (
     req: GetByIdRequest<IntIdParamDto>,
     res: Response,
-  ): Promise<Response> => {
+  ): Promise<void> => {
     const { id } = req.validatedParams;
     const dto = await this.service.getByKeywordId(id);
     if (!dto) throw new ApiError(`Keyword with ID: ${id} not found!`);
-    return sendResponse(
+    sendResponse(
       res,
       200,
       dto,
@@ -55,31 +55,31 @@ export class KeywordController {
   upsert = async (
     req: UpsertRequest<KeywordUpsertDto>,
     res: Response,
-  ): Promise<Response> => {
+  ): Promise<void> => {
     const items = req.body;
     await this.service.upsertKeywords(items);
-    return sendResponse(res, 204, null, "Keywords upserted successfully.");
+    sendResponse(res, 204, null, "Keywords upserted successfully.");
   };
 
   // POST /api/keywords/scores
   setScores = async (
     req: SetScoresRequest<KeywordSetScoreDto>,
     res: Response,
-  ): Promise<Response> => {
+  ): Promise<void> => {
     const scores = req.body;
     await this.service.setKeywordScores(scores);
-    return sendResponse(res, 204, null, "Keywords scores set successfully.");
+    sendResponse(res, 204, null, "Keywords scores set successfully.");
   };
 
   // POST /api/keywords/bulkscores?days=7
   getBulkScores = async (
     req: GetBulkScoresRequest<IntBulkDto>,
     res: Response,
-  ): Promise<Response> => {
+  ): Promise<void> => {
     const { ids } = req.body;
     const days = req.validatedQuery?.days ?? 7;
     const result = await this.service.getBulkKeywordScores(ids, days);
-    return sendResponse(
+    sendResponse(
       res,
       200,
       result,

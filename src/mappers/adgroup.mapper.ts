@@ -1,6 +1,7 @@
-import { AdGroup, Prisma } from "@prisma/client";
-import { AdGroupDto } from "../dtos/index.js";
+import { type AdGroup, Prisma } from "@prisma/client";
 import { AdGroupScoreMapper } from "./adgroup-score.mapper.js";
+
+import type { AdGroupDto } from "../dtos/index.js";
 
 type RowAdGroup =
   | AdGroup

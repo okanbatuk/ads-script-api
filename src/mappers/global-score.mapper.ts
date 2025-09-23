@@ -1,6 +1,7 @@
-import { GlobalScore } from "@prisma/client";
 import { formatDate } from "../utils/index.js";
-import { GlobalScoreDto } from "../dtos/index.js";
+
+import type { GlobalScore } from "@prisma/client";
+import type { GlobalScoreDto } from "../dtos/index.js";
 
 export class GlobalScoreMapper {
   static toDto(row: GlobalScore): GlobalScoreDto {

@@ -1,6 +1,7 @@
-import { Campaign, Prisma } from "@prisma/client";
-import { CampaignDto } from "../dtos/index.js";
+import { type Campaign, Prisma } from "@prisma/client";
 import { CampaignScoreMapper } from "./campaign-score.mapper.js";
+
+import type { CampaignDto } from "../dtos/index.js";
 
 type RowCampaign =
   | Campaign

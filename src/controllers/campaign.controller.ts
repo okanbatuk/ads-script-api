@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types/index.js";
 import { sendResponse } from "../utils/index.js";
@@ -61,7 +61,7 @@ export class CampaignController {
     sendResponse(res, 204, null, "Campaign upserted successfully.");
   };
 
-  // /api/campaigns/scores
+  // POST /api/campaigns/scores
   setScores = async (
     req: SetScoresRequest<CampaignScoresDto>,
     res: Response,

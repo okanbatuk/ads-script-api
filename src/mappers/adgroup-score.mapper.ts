@@ -1,5 +1,5 @@
-import { AdGroupScore } from "@prisma/client";
-import { AdGroupScoreDto } from "../dtos/index.js";
+import type { AdGroupScore } from "@prisma/client";
+import type { AdGroupScoreDto } from "../dtos/index.js";
 import { formatDate } from "../utils/index.js";
 
 export class AdGroupScoreMapper {

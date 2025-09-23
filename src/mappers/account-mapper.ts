@@ -1,6 +1,7 @@
-import { Account, Prisma } from "@prisma/client";
-import { AccountDto } from "../dtos/index.js";
+import { type Account, Prisma } from "@prisma/client";
 import { AccountScoreMapper } from "./account-score.mapper.js";
+
+import type { AccountDto } from "../dtos/index.js";
 
 type RowAccount =
   | Account

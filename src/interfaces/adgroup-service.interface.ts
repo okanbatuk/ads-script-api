@@ -1,4 +1,4 @@
-import { AdGroupUpsertDto } from "../schemas/index.js";
+import type { AdGroupUpsertDto } from "../schemas/index.js";
 import type { AdGroupDto, AdGroupScoreDto } from "../dtos/index.js";
 
 export interface IAdGroupService {

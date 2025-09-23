@@ -1,6 +1,7 @@
-import { AccountScore } from "@prisma/client";
-import { AccountScoreDto } from "../dtos/index.js";
 import { formatDate } from "../utils/index.js";
+
+import type { AccountScore } from "@prisma/client";
+import type { AccountScoreDto } from "../dtos/index.js";
 
 export class AccountScoreMapper {
   static toDto(row: AccountScore): AccountScoreDto {

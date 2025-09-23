@@ -1,9 +1,9 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types/index.js";
 import { sendResponse } from "../utils/index.js";
-import { IGlobalScoreService } from "../interfaces/index.js";
 
+import type { IGlobalScoreService } from "../interfaces/index.js";
 import type { ScoreDateDto } from "../schemas/index.js";
 
 @injectable()
@@ -30,7 +30,7 @@ export class GlobalScoreController {
 
   // SET /api/global
   public setGlobalScore = async (
-    req: Request,
+    req: SetScoresRequest<ScoreDateDto>,
     res: Response,
   ): Promise<void> => {
     const { date } = req.body;

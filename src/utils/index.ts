@@ -3,4 +3,3 @@ export * from "./send-response.js";
 export * from "./error-handler.js";
 export * from "./date.formatter.js";
 export * from "./serialize-entity.js";
-export * from "./prisma-keyword.filter.js";

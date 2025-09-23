@@ -4,8 +4,8 @@ import { TYPES } from "../types/index.js";
 import { Keyword, Prisma, PrismaClient, Status } from "../models/prisma.js";
 import { KeywordMapper, KeywordScoreMapper } from "../mappers/index.js";
 
-import type { KeywordDto, KeywordScoreDto } from "../dtos/index.js";
 import type { IKeywordService } from "../interfaces/index.js";
+import type { KeywordDto, KeywordScoreDto } from "../dtos/index.js";
 import type { KeywordSetScoreDto, KeywordUpsertDto } from "../schemas/index.js";
 
 @injectable()

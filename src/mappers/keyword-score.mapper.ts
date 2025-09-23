@@ -1,6 +1,7 @@
-import { KeywordScore } from "@prisma/client";
-import { KeywordScoreDto } from "../dtos/index.js";
 import { formatDate } from "../utils/index.js";
+
+import type { KeywordScore } from "@prisma/client";
+import type { KeywordScoreDto } from "../dtos/index.js";
 
 export class KeywordScoreMapper {
   static toDto(row: KeywordScore): KeywordScoreDto {

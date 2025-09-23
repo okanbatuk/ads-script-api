@@ -13,8 +13,8 @@ const router = Router();
 
 router.use("/keywords", keywordRouter);
 router.use("/adgroups", adGroupRouter);
-router.use("/campaign", campaignRouter);
-router.use("/account", accountRouter);
+router.use("/campaigns", campaignRouter);
+router.use("/accounts", accountRouter);
 
 router
   .get("/error", async (_req: Request, _res: Response, next: NextFunction) => {

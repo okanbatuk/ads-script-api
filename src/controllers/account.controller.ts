@@ -1,10 +1,10 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types/index.js";
 import { sendResponse } from "../utils/index.js";
 import { ApiError } from "../errors/api.error.js";
-import { IAccountService } from "../interfaces/index.js";
-import {
+import type { IAccountService } from "../interfaces/index.js";
+import type {
   AccountScoresDto,
   AccountUpsertDto,
   BigIntBulkDto,

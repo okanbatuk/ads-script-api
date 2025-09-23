@@ -1,5 +1,5 @@
 import type { AccountDto, AccountScoreDto } from "../dtos/index.js";
-import { AccountUpsertDto } from "../schemas/index.js";
+import type { AccountUpsertDto } from "../schemas/index.js";
 
 export interface IAccountService {
   getAccountScores(

@@ -10,9 +10,9 @@ import {
 import { TYPES } from "../types/index.js";
 import { AccountMapper, AccountScoreMapper } from "../mappers/index.js";
 
+import type { AccountUpsertDto } from "../schemas/index.js";
 import type { IAccountService } from "../interfaces/index.js";
 import type { AccountDto, AccountScoreDto } from "../dtos/index.js";
-import { AccountUpsertDto } from "src/schemas/account-upsert.schema.js";
 
 @injectable()
 export class AccountService implements IAccountService {

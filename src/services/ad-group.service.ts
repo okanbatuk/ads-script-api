@@ -10,9 +10,9 @@ import {
 } from "../models/prisma.js";
 import { AdGroupMapper, AdGroupScoreMapper } from "../mappers/index.js";
 
+import type { AdGroupUpsertDto } from "../schemas/index.js";
 import type { IAdGroupService } from "../interfaces/index.js";
 import type { AdGroupDto, AdGroupScoreDto } from "../dtos/index.js";
-import type { AdGroupUpsertDto } from "../schemas/index.js";
 
 @injectable()
 export class AdGroupService implements IAdGroupService {
