@@ -33,6 +33,7 @@ export class GlobalScoreController {
     req: SetScoresRequest<ScoreDateDto>,
     res: Response,
   ): Promise<void> => {
+    console.log(`Set Global Score /api/global`);
     const { date } = req.body;
     const dateObj = new Date(date);
     await this.service.setGlobalScore(dateObj);

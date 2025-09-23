@@ -57,6 +57,7 @@ export class AdGroupController {
     req: UpsertRequest<AdGroupUpsertDto>,
     res: Response,
   ): Promise<void> => {
+    console.log(`UPSERT CONTROLLER /api/adgroups`);
     const items = req.body;
     await this.service.upsert(items);
     sendResponse(res, 204, null, "Ad Groups upserted successfully.");
@@ -67,6 +68,7 @@ export class AdGroupController {
     req: SetScoresRequest<AdGroupScoresDto>,
     res: Response,
   ): Promise<void> => {
+    console.log(`SET SCORES CONTROLLER /api/adgroups/scores`);
     const { adGroupIds, date } = req.body;
     await this.service.setAdGroupScores(adGroupIds, date);
 

@@ -56,6 +56,7 @@ export class KeywordController {
     req: UpsertRequest<KeywordUpsertDto>,
     res: Response,
   ): Promise<void> => {
+    console.log(`UPSERT CONTROLLERS /api/keywords`);
     const items = req.body;
     await this.service.upsertKeywords(items);
     sendResponse(res, 204, null, "Keywords upserted successfully.");
@@ -66,6 +67,7 @@ export class KeywordController {
     req: SetScoresRequest<KeywordSetScoreDto>,
     res: Response,
   ): Promise<void> => {
+    console.log(`SET SCORES CONTROLLERS /api/keywords/scores`);
     const scores = req.body;
     await this.service.setKeywordScores(scores);
     sendResponse(res, 204, null, "Keywords scores set successfully.");

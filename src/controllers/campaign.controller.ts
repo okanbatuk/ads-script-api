@@ -56,6 +56,7 @@ export class CampaignController {
     req: UpsertRequest<CampaignUpsertDto>,
     res: Response,
   ): Promise<void> => {
+    console.log(`UPSERT CONTROLLER /api/campaigns`);
     const items = req.body;
     await this.service.upsertCampaigns(items);
     sendResponse(res, 204, null, "Campaign upserted successfully.");
@@ -66,6 +67,7 @@ export class CampaignController {
     req: SetScoresRequest<CampaignScoresDto>,
     res: Response,
   ): Promise<void> => {
+    console.log(`SET SCORES CONTROLLER /api/campaigns/scores`);
     const { campaignIds, date } = req.body;
     await this.service.setCampaignScores(campaignIds, date);
 

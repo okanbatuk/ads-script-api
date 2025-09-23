@@ -57,6 +57,7 @@ export class AccountController {
     req: UpsertRequest<AccountUpsertDto>,
     res: Response,
   ): Promise<void> => {
+    console.log(`UPSERT CONTROLLER /api/accounts`);
     const items = req.body;
     await this.service.upsert(items);
     sendResponse(res, 204, null, "Accounts upserted successfully.");
@@ -67,6 +68,7 @@ export class AccountController {
     req: SetScoresRequest<AccountScoresDto>,
     res: Response,
   ): Promise<void> => {
+    console.log(`SET SCORES CONTROLLER /api/accounts/scores`);
     const { accountIds, date } = req.body;
 
     await this.service.setAccountScores(accountIds, date);
