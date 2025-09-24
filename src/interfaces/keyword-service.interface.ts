@@ -1,4 +1,4 @@
-import type { KeywordUpsertDto } from "../schemas/index.js";
+import type { KeywordUpsertSchema } from "../schemas/keyword-upsert.schema.js";
 import type { KeywordDto, KeywordScoreDto } from "../dtos/index.js";
 
 export interface IKeywordService {
@@ -20,7 +20,7 @@ export interface IKeywordService {
 
   getByKeywordId(id: number): Promise<KeywordDto | null>;
 
-  upsertKeywords(items: KeywordUpsertDto[]): Promise<void>;
+  upsertKeywords(items: KeywordUpsertSchema[]): Promise<void>;
 
   setKeywordScores(
     scores: {

@@ -5,16 +5,24 @@ import {
   validateQuery,
 } from "../middleware/index.js";
 import {
-  BigIntBulkDto,
+  type BigIntBulkDto,
   bigIntBulkSchema,
-  BigIntIdParamDto,
+  type BigIntIdParamDto,
   bigIntIdParamSchema,
+  type CampaignScoresSchema,
   campaignScoresSchema,
+  type CampaignUpsertSchema,
   campaignUpsertSchema,
 } from "../schemas/index.js";
 import { TYPES } from "../types/index.js";
 import { CampaignController } from "../controllers/index.js";
 import { container } from "../container/container.js";
+import type {
+  CampaignScoresDto,
+  CampaignUpsertDto,
+  IdBulkDto,
+  IdParamDto,
+} from "../dtos/index.js";
 
 export const campaignRouter = Router({ mergeParams: true });
 
@@ -26,7 +34,10 @@ campaignRouter.get(
   validateParams(bigIntIdParamSchema),
   validateQuery,
   async (req: any, res: Response) => {
-    await ctrl.getScores(req as GetScoresRequest<BigIntIdParamDto>, res);
+    await ctrl.getScores(
+      req as GetScoresRequest<IdParamDto, BigIntIdParamDto>,
+      res,
+    );
   },
 );
 
@@ -35,7 +46,10 @@ campaignRouter.get(
   "/:id",
   validateParams(bigIntIdParamSchema),
   async (req: any, res: Response) => {
-    await ctrl.getById(req as GetByIdRequest<BigIntIdParamDto>, res);
+    await ctrl.getById(
+      req as GetByIdRequest<IdParamDto, BigIntIdParamDto>,
+      res,
+    );
   },
 );
 
@@ -43,14 +57,24 @@ campaignRouter.get(
 campaignRouter.post(
   "/",
   validateBody(campaignUpsertSchema),
-  ctrl.upsertCampaigns,
+  async (req: any, res: Response) => {
+    await ctrl.upsertCampaigns(
+      req as UpsertRequest<CampaignUpsertDto, CampaignUpsertSchema>,
+      res,
+    );
+  },
 );
 
 // POST /api/campaigns/scores
 campaignRouter.post(
   "/scores",
   validateBody(campaignScoresSchema),
-  ctrl.setScores,
+  async (req: any, res: Response) => {
+    await ctrl.setScores(
+      req as SetScoresRequest<CampaignScoresDto, CampaignScoresSchema>,
+      res,
+    );
+  },
 );
 
 // POST /api/campaigns/bulkscores?days=7
@@ -59,6 +83,9 @@ campaignRouter.post(
   validateQuery,
   validateBody(bigIntBulkSchema),
   async (req: any, res: Response) => {
-    await ctrl.getBulkScores(req as GetBulkScoresRequest<BigIntBulkDto>, res);
+    await ctrl.getBulkScores(
+      req as GetBulkScoresRequest<IdBulkDto, BigIntBulkDto>,
+      res,
+    );
   },
 );

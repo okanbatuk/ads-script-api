@@ -12,9 +12,17 @@ import {
   accountUpsertSchema,
   accountScoresSchema,
   bigIntBulkSchema,
-  BigIntIdParamDto,
-  BigIntBulkDto,
+  type BigIntIdParamDto,
+  type BigIntBulkDto,
+  type AccountUpsertSchema,
+  type AccountScoresSchema,
 } from "../schemas/index.js";
+import type {
+  AccountScoresDto,
+  AccountUpsertDto,
+  IdBulkDto,
+  IdParamDto,
+} from "../dtos/index.js";
 
 export const accountRouter = Router({ mergeParams: true });
 const ctrl = container.get<AccountController>(TYPES.AccountController);
@@ -25,7 +33,10 @@ accountRouter.get(
   validateParams(bigIntIdParamSchema),
   validateQuery,
   async (req: any, res: Response) => {
-    await ctrl.getScores(req as GetScoresRequest<BigIntIdParamDto>, res);
+    await ctrl.getScores(
+      req as GetScoresRequest<IdParamDto, BigIntIdParamDto>,
+      res,
+    );
   },
 );
 
@@ -34,18 +45,35 @@ accountRouter.get(
   "/:id",
   validateParams(bigIntIdParamSchema),
   async (req: any, res: Response) => {
-    await ctrl.getById(req as GetByIdRequest<BigIntIdParamDto>, res);
+    await ctrl.getById(
+      req as GetByIdRequest<IdParamDto, BigIntIdParamDto>,
+      res,
+    );
   },
 );
 
 /* POST /api/accounts */
-accountRouter.post("/", validateBody(accountUpsertSchema.array()), ctrl.upsert);
+accountRouter.post(
+  "/",
+  validateBody(accountUpsertSchema.array()),
+  async (req: any, res: Response) => {
+    await ctrl.upsert(
+      req as UpsertRequest<AccountUpsertDto, AccountUpsertSchema>,
+      res,
+    );
+  },
+);
 
 /* POST /api/accounts/scores */
 accountRouter.post(
   "/scores",
   validateBody(accountScoresSchema),
-  ctrl.setScores,
+  async (req: any, res: Response) => {
+    await ctrl.setScores(
+      req as SetScoresRequest<AccountScoresDto, AccountScoresSchema>,
+      res,
+    );
+  },
 );
 
 /* POST /api/accounts/bulkscores?days=7 */
@@ -54,6 +82,9 @@ accountRouter.post(
   validateQuery,
   validateBody(bigIntBulkSchema),
   async (req: any, res: Response) => {
-    await ctrl.getBulkScores(req as GetBulkScoresRequest<BigIntBulkDto>, res);
+    await ctrl.getBulkScores(
+      req as GetBulkScoresRequest<IdBulkDto, BigIntBulkDto>,
+      res,
+    );
   },
 );

@@ -4,9 +4,12 @@ import { TYPES } from "../types/index.js";
 import { Keyword, Prisma, PrismaClient, Status } from "../models/prisma.js";
 import { KeywordMapper, KeywordScoreMapper } from "../mappers/index.js";
 
+import type {
+  KeywordSetScoreSchema,
+  KeywordUpsertSchema,
+} from "../schemas/index.js";
 import type { IKeywordService } from "../interfaces/index.js";
 import type { KeywordDto, KeywordScoreDto } from "../dtos/index.js";
-import type { KeywordSetScoreDto, KeywordUpsertDto } from "../schemas/index.js";
 
 @injectable()
 export class KeywordService implements IKeywordService {
@@ -14,7 +17,7 @@ export class KeywordService implements IKeywordService {
     @inject(TYPES.PrismaClient) private readonly prisma: PrismaClient,
   ) {}
 
-  transform = (row: KeywordUpsertDto): Omit<Keyword, "id"> => {
+  transform = (row: KeywordUpsertSchema): Omit<Keyword, "id"> => {
     const entries = Object.entries(row).map(([key, value]) => {
       if (key === "status") {
         const upper = (value as string).toUpperCase();
@@ -74,7 +77,7 @@ export class KeywordService implements IKeywordService {
     return row ? KeywordMapper.toDto(row) : null;
   }
 
-  async upsertKeywords(items: KeywordUpsertDto[]): Promise<void> {
+  async upsertKeywords(items: KeywordUpsertSchema[]): Promise<void> {
     const data = items.map((i) => this.transform(i));
     await this.prisma.$transaction(async (tx) => {
       for (const row of data) {
@@ -92,7 +95,7 @@ export class KeywordService implements IKeywordService {
     });
   }
 
-  async setKeywordScores(scores: KeywordSetScoreDto): Promise<void> {
+  async setKeywordScores(scores: KeywordSetScoreSchema): Promise<void> {
     await this.prisma.keywordScore.createMany({
       data: scores,
       skipDuplicates: true,

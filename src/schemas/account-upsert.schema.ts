@@ -8,4 +8,4 @@ export const accountUpsertSchema = z
   })
   .readonly();
 
-export type AccountUpsertDto = z.infer<typeof accountUpsertSchema>;
+export type AccountUpsertSchema = z.infer<typeof accountUpsertSchema>;

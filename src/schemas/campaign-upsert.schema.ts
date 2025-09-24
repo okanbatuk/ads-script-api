@@ -9,4 +9,4 @@ export const campaignUpsertSchema = z
   })
   .readonly();
 
-export type CampaignUpsertDto = z.infer<typeof campaignUpsertSchema>;
+export type CampaignUpsertSchema = z.infer<typeof campaignUpsertSchema>;

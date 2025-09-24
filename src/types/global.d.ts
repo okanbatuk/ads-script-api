@@ -3,31 +3,31 @@ import type { DaysQueryDto } from "../schemas/index.js";
 
 declare global {
   type GetGlobalTrend = Request<unknown, unknown, unknown, DaysQueryDto>;
-  type GetScoresRequest<TParams> = Request<
+  type GetScoresRequest<TParams, TParse> = Request<
     TParams,
     unknown,
     unknown,
     DaysQueryDto
   > & {
-    validatedParams: TParams;
+    validatedParams: TParse;
   };
 
-  type GetByIdRequest<TParams> = Request<TParams> & {
-    validatedParams: TParams;
+  type GetByIdRequest<TParams, TParse> = Request<TParams> & {
+    validatedParams: TParse;
   };
 
-  type UpsertRequest<TBody> = Request<unknown, unknown, TBody[]> & {
-    validatedBody: TBody[];
+  type UpsertRequest<TBody, TParse> = Request<unknown, unknown, TBody[]> & {
+    validatedBody: TParse[];
   };
-  type SetScoresRequest<TBody> = Request<unknown, unknown, TBody> & {
-    validatedBody: TBody;
+  type SetScoresRequest<TBody, TParse> = Request<unknown, unknown, TBody> & {
+    validatedBody: TParse;
   };
-  type GetBulkScoresRequest<TBody> = Request<
+  type GetBulkScoresRequest<TBody, TParse> = Request<
     unknown,
     unknown,
     TBody,
     DaysQueryDto
   > & {
-    validatedBody: TBody;
+    validatedBody: TParse;
   };
 }

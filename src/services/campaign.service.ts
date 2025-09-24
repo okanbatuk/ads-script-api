@@ -10,9 +10,9 @@ import {
   PrismaClient,
   Status,
 } from "../models/prisma.js";
-import type { CampaignUpsertDto } from "../schemas/index.js";
 import type { ICampaignService } from "../interfaces/index.js";
 import type { CampaignDto, CampaignScoreDto } from "../dtos/index.js";
+import type { CampaignUpsertSchema } from "../schemas/index.js";
 
 @injectable()
 export class CampaignService implements ICampaignService {
@@ -20,7 +20,7 @@ export class CampaignService implements ICampaignService {
     @inject(TYPES.PrismaClient) private readonly prisma: PrismaClient,
   ) {}
 
-  transform = (row: CampaignUpsertDto): Campaign => {
+  transform = (row: CampaignUpsertSchema): Campaign => {
     const entries = Object.entries(row).map(([key, value]) => {
       if (key === "status") {
         const upper = (value as string).toUpperCase();
@@ -72,7 +72,7 @@ export class CampaignService implements ICampaignService {
     return row ? CampaignMapper.toDto(row) : null;
   }
 
-  async upsertCampaigns(items: CampaignUpsertDto[]): Promise<void> {
+  async upsertCampaigns(items: CampaignUpsertSchema[]): Promise<void> {
     const data = items.map((i) => this.transform(i));
 
     await this.prisma.$transaction(async (tx) => {

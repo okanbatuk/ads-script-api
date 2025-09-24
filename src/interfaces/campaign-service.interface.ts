@@ -1,4 +1,4 @@
-import type { CampaignUpsertDto } from "../schemas/index.js";
+import type { CampaignUpsertSchema } from "../schemas/campaign-upsert.schema.js";
 import type { CampaignDto, CampaignScoreDto } from "../dtos/index.js";
 
 export interface ICampaignService {
@@ -20,7 +20,7 @@ export interface ICampaignService {
 
   getById(campaignId: bigint): Promise<CampaignDto | null>;
 
-  upsertCampaigns(items: CampaignUpsertDto[]): Promise<void>;
+  upsertCampaigns(items: CampaignUpsertSchema[]): Promise<void>;
 
   setCampaignScores(campaignIds: bigint[], date: Date): Promise<void>;
 }

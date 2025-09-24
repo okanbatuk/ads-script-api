@@ -12,4 +12,4 @@ export const accountScoresSchema = z.object({
     }),
 });
 
-export type AccountScoresDto = z.infer<typeof accountScoresSchema>;
+export type AccountScoresSchema = z.infer<typeof accountScoresSchema>;

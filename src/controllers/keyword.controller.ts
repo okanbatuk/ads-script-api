@@ -4,13 +4,15 @@ import { TYPES } from "../types/index.js";
 import { sendResponse } from "../utils/index.js";
 import { ApiError } from "../errors/api.error.js";
 
-import type { IKeywordService } from "../interfaces/index.js";
 import type {
   IntBulkDto,
   IntIdParamDto,
-  KeywordSetScoreDto,
-  KeywordUpsertDto,
+  KeywordSetScoreSchema,
+  KeywordUpsertSchema,
 } from "../schemas/index.js";
+import type { IdBulkDto, IdParamDto, KeywordUpsertDto } from "../dtos/index.js";
+import type { IKeywordService } from "../interfaces/index.js";
+import { KeywordScoresDto } from "src/dtos/keyword-scores.dto.js";
 
 @injectable()
 export class KeywordController {
@@ -20,7 +22,7 @@ export class KeywordController {
 
   // GET /api/keywords/:id/scores?days=7
   getScores = async (
-    req: GetScoresRequest<IntIdParamDto>,
+    req: GetScoresRequest<IdParamDto, IntIdParamDto>,
     res: Response,
   ): Promise<void> => {
     const { id } = req.validatedParams;
@@ -37,7 +39,7 @@ export class KeywordController {
 
   // GET /api/keywords/:id
   getById = async (
-    req: GetByIdRequest<IntIdParamDto>,
+    req: GetByIdRequest<IdParamDto, IntIdParamDto>,
     res: Response,
   ): Promise<void> => {
     const { id } = req.validatedParams;
@@ -53,7 +55,7 @@ export class KeywordController {
 
   // POST /api/keywords
   upsert = async (
-    req: UpsertRequest<KeywordUpsertDto>,
+    req: UpsertRequest<KeywordUpsertDto, KeywordUpsertSchema>,
     res: Response,
   ): Promise<void> => {
     console.log(`UPSERT CONTROLLERS /api/keywords`);
@@ -64,7 +66,7 @@ export class KeywordController {
 
   // POST /api/keywords/scores
   setScores = async (
-    req: SetScoresRequest<KeywordSetScoreDto>,
+    req: SetScoresRequest<KeywordScoresDto[], KeywordSetScoreSchema>,
     res: Response,
   ): Promise<void> => {
     console.log(`SET SCORES CONTROLLERS /api/keywords/scores`);
@@ -75,7 +77,7 @@ export class KeywordController {
 
   // POST /api/keywords/bulkscores?days=7
   getBulkScores = async (
-    req: GetBulkScoresRequest<IntBulkDto>,
+    req: GetBulkScoresRequest<IdBulkDto, IntBulkDto>,
     res: Response,
   ): Promise<void> => {
     const { ids } = req.validatedBody;

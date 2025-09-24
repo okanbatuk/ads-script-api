@@ -1,5 +1,5 @@
 import type { AccountDto, AccountScoreDto } from "../dtos/index.js";
-import type { AccountUpsertDto } from "../schemas/index.js";
+import type { AccountUpsertSchema } from "../schemas/index.js";
 
 export interface IAccountService {
   getAccountScores(
@@ -20,7 +20,7 @@ export interface IAccountService {
 
   getById(accountId: bigint): Promise<AccountDto | null>;
 
-  upsert(items: AccountUpsertDto[]): Promise<void>;
+  upsert(items: AccountUpsertSchema[]): Promise<void>;
 
   setAccountScores(accountIds: bigint[], date: Date): Promise<void>;
 }

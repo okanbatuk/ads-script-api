@@ -12,4 +12,4 @@ export const campaignScoresSchema = z.object({
     }),
 });
 
-export type CampaignScoresDto = z.infer<typeof campaignScoresSchema>;
+export type CampaignScoresSchema = z.infer<typeof campaignScoresSchema>;

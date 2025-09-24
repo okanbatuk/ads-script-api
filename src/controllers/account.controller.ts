@@ -3,13 +3,20 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../types/index.js";
 import { sendResponse } from "../utils/index.js";
 import { ApiError } from "../errors/api.error.js";
+
+import type {
+  AccountScoresSchema,
+  AccountUpsertSchema,
+  BigIntBulkDto,
+  BigIntIdParamDto,
+} from "../schemas/index.js";
 import type { IAccountService } from "../interfaces/index.js";
 import type {
   AccountScoresDto,
   AccountUpsertDto,
-  BigIntBulkDto,
-  BigIntIdParamDto,
-} from "../schemas/index.js";
+  IdBulkDto,
+  IdParamDto,
+} from "../dtos/index.js";
 
 @injectable()
 export class AccountController {
@@ -19,7 +26,7 @@ export class AccountController {
 
   // GET /api/accounts/:id/scores?days=7
   getScores = async (
-    req: GetScoresRequest<BigIntIdParamDto>,
+    req: GetScoresRequest<IdParamDto, BigIntIdParamDto>,
     res: Response,
   ): Promise<void> => {
     const { id } = req.validatedParams;
@@ -36,7 +43,7 @@ export class AccountController {
 
   // GET /api/accounts/:id
   getById = async (
-    req: GetByIdRequest<BigIntIdParamDto>,
+    req: GetByIdRequest<IdParamDto, BigIntIdParamDto>,
     res: Response,
   ): Promise<void> => {
     const { id } = req.validatedParams;
@@ -54,7 +61,7 @@ export class AccountController {
 
   // POST /api/accounts
   upsert = async (
-    req: UpsertRequest<AccountUpsertDto>,
+    req: UpsertRequest<AccountUpsertDto, AccountUpsertSchema>,
     res: Response,
   ): Promise<void> => {
     console.log(`UPSERT CONTROLLER /api/accounts`);
@@ -65,7 +72,7 @@ export class AccountController {
 
   // POST /api/accounts/scores
   setScores = async (
-    req: SetScoresRequest<AccountScoresDto>,
+    req: SetScoresRequest<AccountScoresDto, AccountScoresSchema>,
     res: Response,
   ): Promise<void> => {
     console.log(`SET SCORES CONTROLLER /api/accounts/scores`);
@@ -77,7 +84,7 @@ export class AccountController {
 
   // POST /api/accounts/bulkscores?days=7
   getBulkScores = async (
-    req: GetBulkScoresRequest<BigIntBulkDto>,
+    req: GetBulkScoresRequest<IdBulkDto, BigIntBulkDto>,
     res: Response,
   ): Promise<void> => {
     const { ids } = req.validatedBody;

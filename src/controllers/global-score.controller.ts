@@ -4,7 +4,8 @@ import { TYPES } from "../types/index.js";
 import { sendResponse } from "../utils/index.js";
 
 import type { IGlobalScoreService } from "../interfaces/index.js";
-import type { ScoreDateDto } from "../schemas/index.js";
+import type { ScoreDateDto } from "../dtos/index.js";
+import type { ScoreDateSchema } from "../schemas/global-score-date.schema.js";
 
 @injectable()
 export class GlobalScoreController {
@@ -30,7 +31,7 @@ export class GlobalScoreController {
 
   // SET /api/global
   public setGlobalScore = async (
-    req: SetScoresRequest<ScoreDateDto>,
+    req: SetScoresRequest<ScoreDateDto, ScoreDateSchema>,
     res: Response,
   ): Promise<void> => {
     console.log(`Set Global Score /api/global`);

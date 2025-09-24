@@ -7,4 +7,4 @@ export const adGroupUpsertSchema = z.object({
   status: z.string(),
 });
 
-export type AdGroupUpsertDto = z.infer<typeof adGroupUpsertSchema>;
+export type AdGroupUpsertSchema = z.infer<typeof adGroupUpsertSchema>;

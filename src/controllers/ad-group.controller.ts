@@ -5,12 +5,17 @@ import { sendResponse } from "../utils/index.js";
 import { ApiError } from "../errors/api.error.js";
 
 import type {
-  AdGroupScoresDto,
-  AdGroupUpsertDto,
+  AdGroupScoresSchema,
+  AdGroupUpsertSchema,
   BigIntBulkDto,
   BigIntIdParamDto,
-  KeywordSetScoreDto,
 } from "../schemas/index.js";
+import type {
+  AdGroupScoresDto,
+  AdGroupUpsertDto,
+  IdBulkDto,
+  IdParamDto,
+} from "../dtos/index.js";
 import type { IAdGroupService } from "../interfaces/index.js";
 
 @injectable()
@@ -21,7 +26,7 @@ export class AdGroupController {
 
   // GET /api/adgroups/:id/scores?days=7
   getScores = async (
-    req: GetScoresRequest<BigIntIdParamDto>,
+    req: GetScoresRequest<IdParamDto, BigIntIdParamDto>,
     res: Response,
   ): Promise<void> => {
     const { id } = req.validatedParams;
@@ -38,7 +43,7 @@ export class AdGroupController {
 
   // GET /api/adgroups/:id
   getById = async (
-    req: GetByIdRequest<BigIntIdParamDto>,
+    req: GetByIdRequest<IdParamDto, BigIntIdParamDto>,
     res: Response,
   ): Promise<void> => {
     const { id } = req.validatedParams;
@@ -54,7 +59,7 @@ export class AdGroupController {
 
   // POST /api/adgroups
   upsert = async (
-    req: UpsertRequest<AdGroupUpsertDto>,
+    req: UpsertRequest<AdGroupUpsertDto, AdGroupUpsertSchema>,
     res: Response,
   ): Promise<void> => {
     console.log(`UPSERT CONTROLLER /api/adgroups`);
@@ -65,7 +70,7 @@ export class AdGroupController {
 
   // POST /api/adgroups/scores
   setScores = async (
-    req: SetScoresRequest<AdGroupScoresDto>,
+    req: SetScoresRequest<AdGroupScoresDto, AdGroupScoresSchema>,
     res: Response,
   ): Promise<void> => {
     console.log(`SET SCORES CONTROLLER /api/adgroups/scores`);
@@ -77,7 +82,7 @@ export class AdGroupController {
 
   // POST /api/adgroups/bulkscores?days=7
   getBulkScores = async (
-    req: GetBulkScoresRequest<BigIntBulkDto>,
+    req: GetBulkScoresRequest<IdBulkDto, BigIntBulkDto>,
     res: Response,
   ): Promise<void> => {
     const { ids } = req.validatedBody;

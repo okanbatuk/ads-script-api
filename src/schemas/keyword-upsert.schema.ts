@@ -7,4 +7,4 @@ export const keywordUpsertSchema = z.object({
   adGroupId: z.coerce.bigint(),
 });
 
-export type KeywordUpsertDto = z.infer<typeof keywordUpsertSchema>;
+export type KeywordUpsertSchema = z.infer<typeof keywordUpsertSchema>;

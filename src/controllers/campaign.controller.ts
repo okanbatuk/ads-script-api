@@ -7,9 +7,15 @@ import { ApiError } from "../errors/api.error.js";
 import type {
   BigIntBulkDto,
   BigIntIdParamDto,
+  CampaignScoresSchema,
+  CampaignUpsertSchema,
+} from "../schemas/index.js";
+import type {
   CampaignScoresDto,
   CampaignUpsertDto,
-} from "../schemas/index.js";
+  IdBulkDto,
+  IdParamDto,
+} from "../dtos/index.js";
 import type { ICampaignService } from "../interfaces/index.js";
 
 @injectable()
@@ -20,7 +26,7 @@ export class CampaignController {
 
   // GET /api/campaigns/:id/scores?days=7
   getScores = async (
-    req: GetScoresRequest<BigIntIdParamDto>,
+    req: GetScoresRequest<IdParamDto, BigIntIdParamDto>,
     res: Response,
   ): Promise<void> => {
     const { id } = req.validatedParams;
@@ -36,7 +42,7 @@ export class CampaignController {
 
   // GET /api/campaigns/:id
   getById = async (
-    req: GetByIdRequest<BigIntIdParamDto>,
+    req: GetByIdRequest<IdParamDto, BigIntIdParamDto>,
     res: Response,
   ): Promise<void> => {
     const { id } = req.validatedParams;
@@ -53,7 +59,7 @@ export class CampaignController {
 
   // /api/campaigns
   upsertCampaigns = async (
-    req: UpsertRequest<CampaignUpsertDto>,
+    req: UpsertRequest<CampaignUpsertDto, CampaignUpsertSchema>,
     res: Response,
   ): Promise<void> => {
     console.log(`UPSERT CONTROLLER /api/campaigns`);
@@ -64,7 +70,7 @@ export class CampaignController {
 
   // POST /api/campaigns/scores
   setScores = async (
-    req: SetScoresRequest<CampaignScoresDto>,
+    req: SetScoresRequest<CampaignScoresDto, CampaignScoresSchema>,
     res: Response,
   ): Promise<void> => {
     console.log(`SET SCORES CONTROLLER /api/campaigns/scores`);
@@ -76,7 +82,7 @@ export class CampaignController {
 
   // POST /api/campaigns/bulkscores?days=7
   getBulkScores = async (
-    req: GetBulkScoresRequest<BigIntBulkDto>,
+    req: GetBulkScoresRequest<IdBulkDto, BigIntBulkDto>,
     res: Response,
   ): Promise<void> => {
     const { ids } = req.validatedBody;

@@ -1,4 +1,3 @@
-// src/routes/adGroup.routes.ts
 import { Response, Router } from "express";
 import {
   validateBody,
@@ -10,12 +9,20 @@ import {
   adGroupUpsertSchema,
   adGroupScoresSchema,
   bigIntBulkSchema,
-  BigIntIdParamDto,
-  BigIntBulkDto,
+  type BigIntIdParamDto,
+  type BigIntBulkDto,
+  type AdGroupUpsertSchema,
+  type AdGroupScoresSchema,
 } from "../schemas/index.js";
 import { TYPES } from "../types/index.js";
 import { container } from "../container/container.js";
 import { AdGroupController } from "../controllers/index.js";
+import type { IdParamDto } from "../dtos/id-param.dto.js";
+import type {
+  AdGroupScoresDto,
+  AdGroupUpsertDto,
+  IdBulkDto,
+} from "../dtos/index.js";
 
 export const adGroupRouter = Router();
 const ctrl = container.get<AdGroupController>(TYPES.AdGroupController);
@@ -26,7 +33,10 @@ adGroupRouter.get(
   validateParams(bigIntIdParamSchema),
   validateQuery,
   async (req: any, res: Response) => {
-    await ctrl.getScores(req as GetScoresRequest<BigIntIdParamDto>, res);
+    await ctrl.getScores(
+      req as GetScoresRequest<IdParamDto, BigIntIdParamDto>,
+      res,
+    );
   },
 );
 
@@ -35,18 +45,35 @@ adGroupRouter.get(
   "/:id",
   validateParams(bigIntIdParamSchema),
   async (req: any, res: Response) => {
-    await ctrl.getById(req as GetByIdRequest<BigIntIdParamDto>, res);
+    await ctrl.getById(
+      req as GetByIdRequest<IdParamDto, BigIntIdParamDto>,
+      res,
+    );
   },
 );
 
 /* POST /api/adgroups */
-adGroupRouter.post("/", validateBody(adGroupUpsertSchema.array()), ctrl.upsert);
+adGroupRouter.post(
+  "/",
+  validateBody(adGroupUpsertSchema.array()),
+  async (req: any, res: Response) => {
+    await ctrl.upsert(
+      req as UpsertRequest<AdGroupUpsertDto, AdGroupUpsertSchema>,
+      res,
+    );
+  },
+);
 
 /* POST /api/adgroups/scores */
 adGroupRouter.post(
   "/scores",
   validateBody(adGroupScoresSchema),
-  ctrl.setScores,
+  async (req: any, res: Response) => {
+    await ctrl.setScores(
+      req as SetScoresRequest<AdGroupScoresDto, AdGroupScoresSchema>,
+      res,
+    );
+  },
 );
 
 /* POST /api/adgroups/bulkscores?days=7 */
@@ -55,6 +82,9 @@ adGroupRouter.post(
   validateQuery,
   validateBody(bigIntBulkSchema),
   async (req: any, res: Response) => {
-    await ctrl.getBulkScores(req as GetBulkScoresRequest<BigIntBulkDto>, res);
+    await ctrl.getBulkScores(
+      req as GetBulkScoresRequest<IdBulkDto, BigIntBulkDto>,
+      res,
+    );
   },
 );

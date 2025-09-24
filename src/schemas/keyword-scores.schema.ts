@@ -13,4 +13,4 @@ export const keywordScoresSchema = z.array(
   }),
 );
 
-export type KeywordSetScoreDto = z.infer<typeof keywordScoresSchema>;
+export type KeywordSetScoreSchema = z.infer<typeof keywordScoresSchema>;

@@ -12,4 +12,4 @@ export const adGroupScoresSchema = z.object({
     }),
 });
 
-export type AdGroupScoresDto = z.infer<typeof adGroupScoresSchema>;
+export type AdGroupScoresSchema = z.infer<typeof adGroupScoresSchema>;

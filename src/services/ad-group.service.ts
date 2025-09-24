@@ -10,9 +10,9 @@ import {
 } from "../models/prisma.js";
 import { AdGroupMapper, AdGroupScoreMapper } from "../mappers/index.js";
 
-import type { AdGroupUpsertDto } from "../schemas/index.js";
 import type { IAdGroupService } from "../interfaces/index.js";
 import type { AdGroupDto, AdGroupScoreDto } from "../dtos/index.js";
+import type { AdGroupUpsertSchema } from "../schemas/index.js";
 
 @injectable()
 export class AdGroupService implements IAdGroupService {
@@ -20,7 +20,7 @@ export class AdGroupService implements IAdGroupService {
     @inject(TYPES.PrismaClient) private readonly prisma: PrismaClient,
   ) {}
 
-  transform = (row: AdGroupUpsertDto): AdGroup => {
+  transform = (row: AdGroupUpsertSchema): AdGroup => {
     const entries = Object.entries(row).map(([key, value]) => {
       if (key === "status") {
         const upper = (value as string).toUpperCase();
@@ -72,7 +72,7 @@ export class AdGroupService implements IAdGroupService {
     return raw ? AdGroupMapper.toDto(raw) : null;
   }
 
-  async upsert(items: AdGroupUpsertDto[]): Promise<void> {
+  async upsert(items: AdGroupUpsertSchema[]): Promise<void> {
     const data = items.map((i) => this.transform(i));
 
     await this.prisma.$transaction(async (tx) => {

@@ -9,4 +9,4 @@ export const scoreDateSchema = z.object({
     }),
 });
 
-export type ScoreDateDto = z.infer<typeof scoreDateSchema>;
+export type ScoreDateSchema = z.infer<typeof scoreDateSchema>;
