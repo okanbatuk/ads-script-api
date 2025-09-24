@@ -57,7 +57,7 @@ export class CampaignController {
     res: Response,
   ): Promise<void> => {
     console.log(`UPSERT CONTROLLER /api/campaigns`);
-    const items = req.body;
+    const items = req.validatedBody;
     await this.service.upsertCampaigns(items);
     sendResponse(res, 204, null, "Campaign upserted successfully.");
   };
@@ -68,7 +68,7 @@ export class CampaignController {
     res: Response,
   ): Promise<void> => {
     console.log(`SET SCORES CONTROLLER /api/campaigns/scores`);
-    const { campaignIds, date } = req.body;
+    const { campaignIds, date } = req.validatedBody;
     await this.service.setCampaignScores(campaignIds, date);
 
     sendResponse(res, 204, null, "Ad Groups scores set successfully.");
@@ -79,7 +79,7 @@ export class CampaignController {
     req: GetBulkScoresRequest<BigIntBulkDto>,
     res: Response,
   ): Promise<void> => {
-    const { ids } = req.body;
+    const { ids } = req.validatedBody;
     const days = req.validatedQuery?.days ?? 7;
     const result = await this.service.getBulkCampaignScores(ids, days);
 

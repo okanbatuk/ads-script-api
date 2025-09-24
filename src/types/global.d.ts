@@ -16,12 +16,18 @@ declare global {
     validatedParams: TParams;
   };
 
-  type UpsertRequest<TBody> = Request<unknown, unknown, TBody[]>;
-  type SetScoresRequest<TBody> = Request<unknown, unknown, TBody>;
+  type UpsertRequest<TBody> = Request<unknown, unknown, TBody[]> & {
+    validatedBody: TBody[];
+  };
+  type SetScoresRequest<TBody> = Request<unknown, unknown, TBody> & {
+    validatedBody: TBody;
+  };
   type GetBulkScoresRequest<TBody> = Request<
     unknown,
     unknown,
     TBody,
     DaysQueryDto
-  >;
+  > & {
+    validatedBody: TBody;
+  };
 }

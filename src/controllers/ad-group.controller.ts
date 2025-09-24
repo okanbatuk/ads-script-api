@@ -58,7 +58,7 @@ export class AdGroupController {
     res: Response,
   ): Promise<void> => {
     console.log(`UPSERT CONTROLLER /api/adgroups`);
-    const items = req.body;
+    const items = req.validatedBody;
     await this.service.upsert(items);
     sendResponse(res, 204, null, "Ad Groups upserted successfully.");
   };
@@ -69,7 +69,7 @@ export class AdGroupController {
     res: Response,
   ): Promise<void> => {
     console.log(`SET SCORES CONTROLLER /api/adgroups/scores`);
-    const { adGroupIds, date } = req.body;
+    const { adGroupIds, date } = req.validatedBody;
     await this.service.setAdGroupScores(adGroupIds, date);
 
     sendResponse(res, 204, null, "Ad Groups scores set successfully.");
@@ -80,7 +80,7 @@ export class AdGroupController {
     req: GetBulkScoresRequest<BigIntBulkDto>,
     res: Response,
   ): Promise<void> => {
-    const { ids } = req.body;
+    const { ids } = req.validatedBody;
     const days = req.validatedQuery?.days ?? 7;
     const result = await this.service.getBulkAdGroupScores(ids, days);
     sendResponse(

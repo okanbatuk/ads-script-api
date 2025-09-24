@@ -57,7 +57,7 @@ export class KeywordController {
     res: Response,
   ): Promise<void> => {
     console.log(`UPSERT CONTROLLERS /api/keywords`);
-    const items = req.body;
+    const items = req.validatedBody;
     await this.service.upsertKeywords(items);
     sendResponse(res, 204, null, "Keywords upserted successfully.");
   };
@@ -68,7 +68,7 @@ export class KeywordController {
     res: Response,
   ): Promise<void> => {
     console.log(`SET SCORES CONTROLLERS /api/keywords/scores`);
-    const scores = req.body;
+    const scores = req.validatedBody;
     await this.service.setKeywordScores(scores);
     sendResponse(res, 204, null, "Keywords scores set successfully.");
   };
@@ -78,7 +78,7 @@ export class KeywordController {
     req: GetBulkScoresRequest<IntBulkDto>,
     res: Response,
   ): Promise<void> => {
-    const { ids } = req.body;
+    const { ids } = req.validatedBody;
     const days = req.validatedQuery?.days ?? 7;
     const result = await this.service.getBulkKeywordScores(ids, days);
     sendResponse(

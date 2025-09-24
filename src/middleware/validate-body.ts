@@ -2,10 +2,10 @@ import { z } from "zod";
 import { Request, Response, NextFunction } from "express";
 
 export const validateBody =
-  (schema: z.ZodType) =>
+  <T extends z.ZodTypeAny>(schema: z.ZodType) =>
   (req: Request, _res: Response, next: NextFunction): void => {
     try {
-      schema.parse(req.body);
+      (req as any).validatedBody = schema.parse(req.body) as z.infer<T>;
       next();
     } catch (error) {
       console.error(error);

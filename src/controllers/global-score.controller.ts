@@ -34,7 +34,7 @@ export class GlobalScoreController {
     res: Response,
   ): Promise<void> => {
     console.log(`Set Global Score /api/global`);
-    const { date } = req.body;
+    const { date } = req.validatedBody;
     const dateObj = new Date(date);
     await this.service.setGlobalScore(dateObj);
     sendResponse(res, 204, null, "Global score set successfully.");

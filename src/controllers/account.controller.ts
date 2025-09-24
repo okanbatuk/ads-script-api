@@ -58,7 +58,7 @@ export class AccountController {
     res: Response,
   ): Promise<void> => {
     console.log(`UPSERT CONTROLLER /api/accounts`);
-    const items = req.body;
+    const items = req.validatedBody;
     await this.service.upsert(items);
     sendResponse(res, 204, null, "Accounts upserted successfully.");
   };
@@ -69,7 +69,7 @@ export class AccountController {
     res: Response,
   ): Promise<void> => {
     console.log(`SET SCORES CONTROLLER /api/accounts/scores`);
-    const { accountIds, date } = req.body;
+    const { accountIds, date } = req.validatedBody;
 
     await this.service.setAccountScores(accountIds, date);
     sendResponse(res, 204, null, "Account scores set successfully.");
@@ -80,7 +80,7 @@ export class AccountController {
     req: GetBulkScoresRequest<BigIntBulkDto>,
     res: Response,
   ): Promise<void> => {
-    const { ids } = req.body;
+    const { ids } = req.validatedBody;
     const days = req.validatedQuery?.days ?? 7;
 
     const result = await this.service.getBulkAccountScores(ids, days);
