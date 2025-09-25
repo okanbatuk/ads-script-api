@@ -34,7 +34,7 @@ export class AccountService implements IAccountService {
   };
 
   async getAccountScores(
-    accountId: bigint,
+    accountId: number,
     days: number = 7,
   ): Promise<{ scores: AccountScoreDto[]; total: number }> {
     const where: Prisma.AccountScoreWhereInput = {
@@ -51,7 +51,7 @@ export class AccountService implements IAccountService {
   }
 
   async getBulkAccountScores(
-    accountIds: bigint[],
+    accountIds: number[],
     days: number = 7,
   ): Promise<{ scores: AccountScoreDto[]; total: number }> {
     const where: Prisma.AccountScoreWhereInput = {
@@ -67,7 +67,7 @@ export class AccountService implements IAccountService {
     return { scores: AccountScoreMapper.toDtos(rows), total };
   }
 
-  async getById(accountId: bigint): Promise<AccountDto | null> {
+  async getById(accountId: number): Promise<AccountDto | null> {
     const raw = await this.prisma.account.findUnique({
       where: { id: accountId },
     });
@@ -80,7 +80,7 @@ export class AccountService implements IAccountService {
     await this.prisma.$transaction(async (tx) => {
       for (const row of data) {
         await tx.account.upsert({
-          where: { id: row.id },
+          where: { accountId: row.accountId },
           update: { name: row.name, status: row.status },
           create: row,
         });
@@ -88,7 +88,7 @@ export class AccountService implements IAccountService {
     });
   }
 
-  async setAccountScores(accountIds: bigint[], date: Date): Promise<void> {
+  async setAccountScores(accountIds: number[], date: Date): Promise<void> {
     const rows = await this.prisma.campaign.findMany({
       where: { accountId: { in: accountIds } },
       include: {
@@ -99,7 +99,7 @@ export class AccountService implements IAccountService {
       },
     });
 
-    const map = new Map<bigint, { qsSum: number; count: number }>();
+    const map = new Map<number, { qsSum: number; count: number }>();
 
     for (let c of rows) {
       if (c.scores.length === 0) continue;
@@ -131,7 +131,7 @@ export class AccountService implements IAccountService {
         INSERT INTO account_score (account_id, date, qs, campaign_count)
         SELECT t.account_id, t.date, t.qs, t.campaign_count
         FROM UNNEST(
-          ${accountIds}::bigint[],
+          ${accountIds}::number[],
           ${dates}::date[],
           ${qsArr}::float[],
           ${counts}::int[]

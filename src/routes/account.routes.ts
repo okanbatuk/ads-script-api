@@ -12,10 +12,10 @@ import {
   accountUpsertSchema,
   accountScoresSchema,
   bigIntBulkSchema,
-  type BigIntIdParamDto,
-  type BigIntBulkDto,
   type AccountUpsertSchema,
   type AccountScoresSchema,
+  type IntIdParamDto,
+  type IntBulkDto,
 } from "../schemas/index.js";
 import type {
   AccountScoresDto,
@@ -34,7 +34,7 @@ accountRouter.get(
   validateQuery,
   async (req: any, res: Response) => {
     await ctrl.getScores(
-      req as GetScoresRequest<IdParamDto, BigIntIdParamDto>,
+      req as GetScoresRequest<IdParamDto, IntIdParamDto>,
       res,
     );
   },
@@ -45,10 +45,7 @@ accountRouter.get(
   "/:id",
   validateParams(bigIntIdParamSchema),
   async (req: any, res: Response) => {
-    await ctrl.getById(
-      req as GetByIdRequest<IdParamDto, BigIntIdParamDto>,
-      res,
-    );
+    await ctrl.getById(req as GetByIdRequest<IdParamDto, IntIdParamDto>, res);
   },
 );
 
@@ -83,7 +80,7 @@ accountRouter.post(
   validateBody(bigIntBulkSchema),
   async (req: any, res: Response) => {
     await ctrl.getBulkScores(
-      req as GetBulkScoresRequest<IdBulkDto, BigIntBulkDto>,
+      req as GetBulkScoresRequest<IdBulkDto, IntBulkDto>,
       res,
     );
   },

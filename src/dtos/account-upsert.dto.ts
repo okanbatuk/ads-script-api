@@ -1,5 +1,5 @@
 export type AccountUpsertDto = {
-  id: string;
+  accountId: string;
   name: string;
   status: string;
 };

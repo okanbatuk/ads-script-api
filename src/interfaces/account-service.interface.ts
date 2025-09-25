@@ -3,7 +3,7 @@ import type { AccountUpsertSchema } from "../schemas/index.js";
 
 export interface IAccountService {
   getAccountScores(
-    accountId: bigint,
+    accountId: number,
     days: number,
   ): Promise<{
     scores: AccountScoreDto[];
@@ -11,16 +11,16 @@ export interface IAccountService {
   }>;
 
   getBulkAccountScores(
-    accountIds: bigint[],
+    accountIds: number[],
     days: number,
   ): Promise<{
     scores: AccountScoreDto[];
     total: number;
   }>;
 
-  getById(accountId: bigint): Promise<AccountDto | null>;
+  getById(accountId: number): Promise<AccountDto | null>;
 
   upsert(items: AccountUpsertSchema[]): Promise<void>;
 
-  setAccountScores(accountIds: bigint[], date: Date): Promise<void>;
+  setAccountScores(accountIds: number[], date: Date): Promise<void>;
 }

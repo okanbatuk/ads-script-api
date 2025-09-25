@@ -9,7 +9,8 @@ datasource db {
 }
 
 model Account {
-  id        BigInt      @id
+  id        Int           @id @default(autoincrement())
+  accountId String        @unique
   name      String
   status    AccountStatus
   campaigns Campaign[]
@@ -21,7 +22,7 @@ model Account {
 model Campaign {
   id        BigInt    @id
   name      String
-  accountId BigInt
+  accountId Int
   status    Status
   account   Account @relation(fields: [accountId], references: [id])
   adGroups  AdGroup[]
@@ -95,7 +96,7 @@ model CampaignScore {
 
 model AccountScore {
   id            Int      @id @default(autoincrement())
-  accountId     BigInt
+  accountId     Int
   date          DateTime @db.Date
   qs            Float
   campaignCount Int

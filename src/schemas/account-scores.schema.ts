@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const accountScoresSchema = z.object({
   accountIds: z
-    .array(z.coerce.bigint())
+    .array(z.coerce.number())
     .nonempty("Account Ids array cannot be empty"),
   date: z
     .string()

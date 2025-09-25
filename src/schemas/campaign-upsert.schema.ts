@@ -5,7 +5,7 @@ export const campaignUpsertSchema = z
     id: z.coerce.bigint(),
     name: z.string().min(1, "Name can not be null"),
     status: z.string().min(1, "Status can not be null"),
-    accountId: z.coerce.bigint(),
+    accountId: z.coerce.number(),
   })
   .readonly();
 

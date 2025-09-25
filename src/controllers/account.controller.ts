@@ -7,16 +7,16 @@ import { ApiError } from "../errors/api.error.js";
 import type {
   AccountScoresSchema,
   AccountUpsertSchema,
-  BigIntBulkDto,
-  BigIntIdParamDto,
+  IntBulkDto,
+  IntIdParamDto,
 } from "../schemas/index.js";
-import type { IAccountService } from "../interfaces/index.js";
 import type {
   AccountScoresDto,
   AccountUpsertDto,
   IdBulkDto,
   IdParamDto,
 } from "../dtos/index.js";
+import type { IAccountService } from "../interfaces/index.js";
 
 @injectable()
 export class AccountController {
@@ -26,7 +26,7 @@ export class AccountController {
 
   // GET /api/accounts/:id/scores?days=7
   getScores = async (
-    req: GetScoresRequest<IdParamDto, BigIntIdParamDto>,
+    req: GetScoresRequest<IdParamDto, IntIdParamDto>,
     res: Response,
   ): Promise<void> => {
     const { id } = req.validatedParams;
@@ -43,7 +43,7 @@ export class AccountController {
 
   // GET /api/accounts/:id
   getById = async (
-    req: GetByIdRequest<IdParamDto, BigIntIdParamDto>,
+    req: GetByIdRequest<IdParamDto, IntIdParamDto>,
     res: Response,
   ): Promise<void> => {
     const { id } = req.validatedParams;
@@ -84,7 +84,7 @@ export class AccountController {
 
   // POST /api/accounts/bulkscores?days=7
   getBulkScores = async (
-    req: GetBulkScoresRequest<IdBulkDto, BigIntBulkDto>,
+    req: GetBulkScoresRequest<IdBulkDto, IntBulkDto>,
     res: Response,
   ): Promise<void> => {
     const { ids } = req.validatedBody;
