@@ -49,6 +49,9 @@ accountRouter.get(
   },
 );
 
+/* GET /api/accounts/account/:accoundId */
+accountRouter.get("/account/:accountId", ctrl.getByAccountId);
+
 /* POST /api/accounts */
 accountRouter.post(
   "/",

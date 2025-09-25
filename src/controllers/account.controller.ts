@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types/index.js";
 import { sendResponse } from "../utils/index.js";
@@ -56,6 +56,22 @@ export class AccountController {
       200,
       dto,
       `Account with ID: ${id} retrieved successfully.`,
+    );
+  };
+
+  // GET /api/accounts/account/:accountId
+  getByAccountId = async (req: Request, res: Response): Promise<void> => {
+    const { accountId } = req.params;
+    if (!accountId) throw new ApiError(`Does not provide an Accound ID!`);
+    const dto = await this.service.getByAccountId(accountId);
+    if (!dto)
+      throw new ApiError(`Account with ID: ${accountId} not found`, 404);
+
+    sendResponse(
+      res,
+      200,
+      dto,
+      `Account with ID: ${accountId} retrieved successfully.`,
     );
   };
 

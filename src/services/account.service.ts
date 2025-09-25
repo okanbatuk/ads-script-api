@@ -74,6 +74,13 @@ export class AccountService implements IAccountService {
     return raw ? AccountMapper.toDto(raw) : null;
   }
 
+  async getByAccountId(accountId: string): Promise<AccountDto | null> {
+    const row = await this.prisma.account.findUnique({
+      where: { accountId },
+    });
+    return row ? AccountMapper.toDto(row) : null;
+  }
+
   async upsert(items: AccountUpsertSchema[]): Promise<void> {
     const data = items.map((i) => this.transform(i));
 
@@ -90,7 +97,7 @@ export class AccountService implements IAccountService {
 
   async setAccountScores(accountIds: number[], date: Date): Promise<void> {
     const rows = await this.prisma.campaign.findMany({
-      where: { accountId: { in: accountIds } },
+      where: { id: { in: accountIds } },
       include: {
         scores: {
           where: { date },

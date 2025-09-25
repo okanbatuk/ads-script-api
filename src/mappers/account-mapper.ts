@@ -11,6 +11,7 @@ export class AccountMapper {
   static toDto(row: RowAccount): AccountDto {
     return {
       id: row.id.toString(),
+      accountId: row.accountId,
       name: row.name,
       status: row.status,
       scores:

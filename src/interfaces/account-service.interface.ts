@@ -19,6 +19,7 @@ export interface IAccountService {
   }>;
 
   getById(accountId: number): Promise<AccountDto | null>;
+  getByAccountId(accountId: string): Promise<AccountDto | null>;
 
   upsert(items: AccountUpsertSchema[]): Promise<void>;
 
