@@ -16,8 +16,8 @@ declare global {
     validatedParams: TParse;
   };
 
-  type UpsertRequest<TBody, TParse> = Request<unknown, unknown, TBody[]> & {
-    validatedBody: TParse[];
+  type UpsertRequest<TBody, TParse> = Request<unknown, unknown, TBody> & {
+    validatedBody: TParse;
   };
   type SetScoresRequest<TBody, TParse> = Request<unknown, unknown, TBody> & {
     validatedBody: TParse;

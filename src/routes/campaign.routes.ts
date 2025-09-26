@@ -56,10 +56,10 @@ campaignRouter.get(
 // POST /api/campaigns  (upsert)
 campaignRouter.post(
   "/",
-  validateBody(campaignUpsertSchema),
+  validateBody(campaignUpsertSchema.array()),
   async (req: any, res: Response) => {
     await ctrl.upsertCampaigns(
-      req as UpsertRequest<CampaignUpsertDto, CampaignUpsertSchema>,
+      req as UpsertRequest<CampaignUpsertDto[], CampaignUpsertSchema[]>,
       res,
     );
   },

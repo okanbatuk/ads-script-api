@@ -52,7 +52,7 @@ keywordRouter
     validateBody(keywordUpsertSchema.array()),
     async (req: any, res: Response) => {
       await ctrl.upsert(
-        req as UpsertRequest<KeywordUpsertDto, KeywordUpsertSchema>,
+        req as UpsertRequest<KeywordUpsertDto[], KeywordUpsertSchema[]>,
         res,
       );
     },

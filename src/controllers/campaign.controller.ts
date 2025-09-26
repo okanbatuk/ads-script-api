@@ -57,9 +57,9 @@ export class CampaignController {
     );
   };
 
-  // /api/campaigns
+  // POST /api/campaigns
   upsertCampaigns = async (
-    req: UpsertRequest<CampaignUpsertDto, CampaignUpsertSchema>,
+    req: UpsertRequest<CampaignUpsertDto[], CampaignUpsertSchema[]>,
     res: Response,
   ): Promise<void> => {
     console.log(`UPSERT CONTROLLER /api/campaigns`);

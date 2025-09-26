@@ -55,7 +55,7 @@ export class KeywordController {
 
   // POST /api/keywords
   upsert = async (
-    req: UpsertRequest<KeywordUpsertDto, KeywordUpsertSchema>,
+    req: UpsertRequest<KeywordUpsertDto[], KeywordUpsertSchema[]>,
     res: Response,
   ): Promise<void> => {
     console.log(`UPSERT CONTROLLERS /api/keywords`);

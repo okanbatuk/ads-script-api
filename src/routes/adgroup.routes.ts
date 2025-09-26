@@ -58,7 +58,7 @@ adGroupRouter.post(
   validateBody(adGroupUpsertSchema.array()),
   async (req: any, res: Response) => {
     await ctrl.upsert(
-      req as UpsertRequest<AdGroupUpsertDto, AdGroupUpsertSchema>,
+      req as UpsertRequest<AdGroupUpsertDto[], AdGroupUpsertSchema[]>,
       res,
     );
   },

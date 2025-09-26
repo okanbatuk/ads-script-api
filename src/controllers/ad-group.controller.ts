@@ -59,7 +59,7 @@ export class AdGroupController {
 
   // POST /api/adgroups
   upsert = async (
-    req: UpsertRequest<AdGroupUpsertDto, AdGroupUpsertSchema>,
+    req: UpsertRequest<AdGroupUpsertDto[], AdGroupUpsertSchema[]>,
     res: Response,
   ): Promise<void> => {
     console.log(`UPSERT CONTROLLER /api/adgroups`);
