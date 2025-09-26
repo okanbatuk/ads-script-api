@@ -10,6 +10,7 @@ import type {
 } from "../schemas/index.js";
 import type { IKeywordService } from "../interfaces/index.js";
 import type { KeywordDto, KeywordScoreDto } from "../dtos/index.js";
+import { ApiError } from "src/errors/api.error.js";
 
 @injectable()
 export class KeywordService implements IKeywordService {
@@ -96,9 +97,27 @@ export class KeywordService implements IKeywordService {
   }
 
   async setKeywordScores(scores: KeywordSetScoreSchema): Promise<void> {
-    await this.prisma.keywordScore.createMany({
-      data: scores,
-      skipDuplicates: true,
-    });
+    for (let s of scores) {
+      const keyword = await this.prisma.keyword.findUnique({
+        where: {
+          criterionId_adGroupId: {
+            criterionId: s.keywordId,
+            adGroupId: s.adGroupId,
+          },
+        },
+        select: { id: true },
+      });
+
+      if (!keyword)
+        throw new ApiError(`There is a keyword that has not been upserted.`);
+
+      await this.prisma.keywordScore.create({
+        data: {
+          keywordId: keyword.id,
+          date: s.date,
+          qs: s.qs,
+        },
+      });
+    }
   }
 }
