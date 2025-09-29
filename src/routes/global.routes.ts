@@ -1,9 +1,10 @@
 import { Response, Router } from "express";
-import { validateBody, validateQuery } from "../middleware/index.js";
 import { TYPES } from "../types/index.js";
-import { scoreDateSchema } from "../schemas/index.js";
 import { container } from "../container/container.js";
+import type { ScoreDateDto } from "../dtos/index.js";
 import { GlobalScoreController } from "../controllers/index.js";
+import { validateBody, validateQuery } from "../middleware/index.js";
+import { type ScoreDateSchema, scoreDateSchema } from "../schemas/index.js";
 
 export const globalScoreRouter = Router();
 const ctrl = container.get<GlobalScoreController>(TYPES.GlobalScoreController);
@@ -14,4 +15,13 @@ globalScoreRouter.get("/", validateQuery, async (req: any, res: Response) => {
 });
 
 /* POST /api/global */
-globalScoreRouter.post("/", validateBody(scoreDateSchema), ctrl.setGlobalScore);
+globalScoreRouter.post(
+  "/",
+  validateBody(scoreDateSchema),
+  async (req: any, res: Response) => {
+    await ctrl.setGlobalScore(
+      req as SetScoresRequest<ScoreDateDto, ScoreDateSchema>,
+      res,
+    );
+  },
+);

@@ -6,6 +6,7 @@ import {
   accountRouter,
   adGroupRouter,
   campaignRouter,
+  globalScoreRouter,
   keywordRouter,
 } from "./routes/index.js";
 
@@ -15,6 +16,7 @@ router.use("/keywords", keywordRouter);
 router.use("/adgroups", adGroupRouter);
 router.use("/campaigns", campaignRouter);
 router.use("/accounts", accountRouter);
+router.use("/global", globalScoreRouter);
 
 router
   .get("/error", async (_req: Request, _res: Response, next: NextFunction) => {

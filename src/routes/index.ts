@@ -2,3 +2,4 @@ export * from "./keyword.routes.js";
 export * from "./adgroup.routes.js";
 export * from "./campaign.routes.js";
 export * from "./account.routes.js";
+export * from "./global.routes.js";

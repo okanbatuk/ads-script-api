@@ -58,7 +58,7 @@ accountRouter.post(
   validateBody(accountUpsertSchema.array()),
   async (req: any, res: Response) => {
     await ctrl.upsert(
-      req as UpsertRequest<AccountUpsertDto, AccountUpsertSchema>,
+      req as UpsertRequest<AccountUpsertDto[], AccountUpsertSchema[]>,
       res,
     );
   },

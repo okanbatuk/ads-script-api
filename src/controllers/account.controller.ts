@@ -77,7 +77,7 @@ export class AccountController {
 
   // POST /api/accounts
   upsert = async (
-    req: UpsertRequest<AccountUpsertDto, AccountUpsertSchema>,
+    req: UpsertRequest<AccountUpsertDto[], AccountUpsertSchema[]>,
     res: Response,
   ): Promise<void> => {
     console.log(`UPSERT CONTROLLER /api/accounts`);

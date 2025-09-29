@@ -29,7 +29,7 @@ export class GlobalScoreController {
     );
   };
 
-  // SET /api/global
+  // POST /api/global
   public setGlobalScore = async (
     req: SetScoresRequest<ScoreDateDto, ScoreDateSchema>,
     res: Response,
