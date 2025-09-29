@@ -82,6 +82,7 @@ export class CampaignService implements ICampaignService {
           update: {
             name: row.name,
             status: row.status,
+            accountId: row.accountId,
           },
           create: row,
         });
