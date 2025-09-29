@@ -24,6 +24,23 @@ export class AdGroupController {
     @inject(TYPES.AdGroupService) private readonly service: IAdGroupService,
   ) {}
 
+  // GET /api/adgroups/:id/keywords
+  getAllKeywords = async (
+    req: GetByIdRequest<IdParamDto, BigIntIdParamDto>,
+    res: Response,
+  ): Promise<void> => {
+    const { id } = req.validatedParams;
+    const { include } = req.query;
+    const includeBool = include === "true" || include === "1" ? true : false;
+    const result = await this.service.getAllKeywords(id, includeBool);
+    sendResponse(
+      res,
+      200,
+      result,
+      "All Kewywords by Ad Group have been successfully retrieved.",
+    );
+  };
+
   // GET /api/adgroups/:id/scores?days=7
   getScores = async (
     req: GetScoresRequest<IdParamDto, BigIntIdParamDto>,

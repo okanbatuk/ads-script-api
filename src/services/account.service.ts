@@ -8,11 +8,19 @@ import {
   PrismaClient,
 } from "../models/prisma.js";
 import { TYPES } from "../types/index.js";
-import { AccountMapper, AccountScoreMapper } from "../mappers/index.js";
+import {
+  AccountMapper,
+  AccountScoreMapper,
+  CampaignMapper,
+} from "../mappers/index.js";
 
 import type { AccountUpsertSchema } from "../schemas/index.js";
 import type { IAccountService } from "../interfaces/index.js";
-import type { AccountDto, AccountScoreDto } from "../dtos/index.js";
+import type {
+  AccountDto,
+  AccountScoreDto,
+  CampaignDto,
+} from "../dtos/index.js";
 
 @injectable()
 export class AccountService implements IAccountService {
@@ -32,6 +40,36 @@ export class AccountService implements IAccountService {
     });
     return Object.fromEntries(entries);
   };
+
+  async getAll(
+    include: boolean = false,
+  ): Promise<{ accounts: AccountDto[]; total: number }> {
+    const [rows, total] = await Promise.all([
+      include
+        ? this.prisma.account.findMany({
+            orderBy: { id: "asc" },
+            include: { scores: true },
+          })
+        : this.prisma.account.findMany({ orderBy: { id: "asc" } }),
+      this.prisma.account.count(),
+    ]);
+    return { accounts: AccountMapper.toDtos(rows), total };
+  }
+
+  async getCampaigns(
+    accountId: number,
+  ): Promise<{ campaigns: CampaignDto[]; total: number }> {
+    const [rows, total] = await Promise.all([
+      this.prisma.campaign.findMany({
+        where: { accountId },
+        orderBy: { name: "asc" },
+      }),
+      this.prisma.campaign.count({
+        where: { accountId },
+      }),
+    ]);
+    return { campaigns: rows.map((r) => CampaignMapper.toDto(r)), total };
+  }
 
   async getAccountScores(
     accountId: number,

@@ -27,6 +27,18 @@ import type {
 export const adGroupRouter = Router();
 const ctrl = container.get<AdGroupController>(TYPES.AdGroupController);
 
+// GET /api/adgroups/:id/keywords
+adGroupRouter.get(
+  "/:id/keywords",
+  validateParams(bigIntIdParamSchema),
+  async (req: any, res: Response) => {
+    await ctrl.getAllKeywords(
+      req as GetByIdRequest<IdParamDto, BigIntIdParamDto>,
+      res,
+    );
+  },
+);
+
 /* GET /api/adgroups/:id/scores?days=7 */
 adGroupRouter.get(
   "/:id/scores",

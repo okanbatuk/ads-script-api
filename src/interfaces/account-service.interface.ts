@@ -1,7 +1,20 @@
-import type { AccountDto, AccountScoreDto } from "../dtos/index.js";
+import type {
+  AccountDto,
+  AccountScoreDto,
+  CampaignDto,
+} from "../dtos/index.js";
 import type { AccountUpsertSchema } from "../schemas/index.js";
 
 export interface IAccountService {
+  getAll(include: boolean): Promise<{
+    accounts: AccountDto[];
+    total: number;
+  }>;
+
+  getCampaigns(
+    accountId: number,
+  ): Promise<{ campaigns: CampaignDto[]; total: number }>;
+
   getAccountScores(
     accountId: number,
     days: number,

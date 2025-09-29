@@ -1,7 +1,11 @@
 import { inject, injectable } from "inversify";
 import { startOfDay, subDays } from "date-fns";
 import { TYPES } from "../types/index.js";
-import { CampaignMapper, CampaignScoreMapper } from "../mappers/index.js";
+import {
+  AdGroupMapper,
+  CampaignMapper,
+  CampaignScoreMapper,
+} from "../mappers/index.js";
 
 import {
   type Campaign,
@@ -11,8 +15,13 @@ import {
   Status,
 } from "../models/prisma.js";
 import type { ICampaignService } from "../interfaces/index.js";
-import type { CampaignDto, CampaignScoreDto } from "../dtos/index.js";
+import type {
+  AdGroupDto,
+  CampaignDto,
+  CampaignScoreDto,
+} from "../dtos/index.js";
 import type { CampaignUpsertSchema } from "../schemas/index.js";
+import { $ZodBooleanDef } from "zod/v4/core";
 
 @injectable()
 export class CampaignService implements ICampaignService {
@@ -32,6 +41,26 @@ export class CampaignService implements ICampaignService {
     });
     return Object.fromEntries(entries);
   };
+
+  async getAdGroups(
+    campaignId: bigint,
+    include: boolean = false,
+  ): Promise<{ adGroups: AdGroupDto[]; total: number }> {
+    const [rows, total] = await Promise.all([
+      include
+        ? this.prisma.adGroup.findMany({
+            where: { campaignId },
+            include: { scores: true },
+            orderBy: { name: "asc" },
+          })
+        : this.prisma.adGroup.findMany({
+            where: { campaignId },
+            orderBy: { name: "asc" },
+          }),
+      this.prisma.adGroup.count({ where: { campaignId } }),
+    ]);
+    return { adGroups: rows.map((r) => AdGroupMapper.toDto(r)), total };
+  }
 
   async getCampaignScores(
     campaignId: bigint,

@@ -18,4 +18,8 @@ export class AccountMapper {
         "scores" in row ? AccountScoreMapper.toDtos(row.scores) : undefined,
     };
   }
+
+  static toDtos(rows: RowAccount[]): AccountDto[] {
+    return rows.map((r) => this.toDto(r));
+  }
 }

@@ -24,6 +24,21 @@ export class CampaignController {
     @inject(TYPES.CampaignService) private readonly service: ICampaignService,
   ) {}
 
+  // GET /api/campaigns/:id/adgroups
+  getAdGroups = async (
+    req: GetByIdRequest<IdParamDto, BigIntIdParamDto>,
+    res: Response,
+  ): Promise<void> => {
+    const { id } = req.validatedParams;
+    const result = await this.service.getAdGroups(id);
+    sendResponse(
+      res,
+      200,
+      result,
+      "All Ad Groups by CampaignID have been successfully retrieved.",
+    );
+  };
+
   // GET /api/campaigns/:id/scores?days=7
   getScores = async (
     req: GetScoresRequest<IdParamDto, BigIntIdParamDto>,

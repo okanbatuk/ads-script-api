@@ -28,6 +28,18 @@ export const campaignRouter = Router({ mergeParams: true });
 
 const ctrl = container.get<CampaignController>(TYPES.CampaignController);
 
+// GET /api/campaigns/:id/adgroups
+campaignRouter.get(
+  "/:id/adgroups",
+  validateParams(bigIntIdParamSchema),
+  async (req: any, res: Response) => {
+    await ctrl.getAdGroups(
+      req as GetByIdRequest<IdParamDto, BigIntIdParamDto>,
+      res,
+    );
+  },
+);
+
 // GET /api/campaigns/:id/scores?days=7
 campaignRouter.get(
   "/:id/scores",

@@ -24,6 +24,34 @@ export class AccountController {
     @inject(TYPES.AccountService) private readonly service: IAccountService,
   ) {}
 
+  // GET /api/accounts
+  getAll = async (req: Request, res: Response): Promise<void> => {
+    const { include } = req.query;
+    const includeBool = include === "true" || include === "1" ? true : false;
+    const result = await this.service.getAll(includeBool);
+    sendResponse(
+      res,
+      200,
+      result,
+      `All accounts have been successfully retrieved.`,
+    );
+  };
+
+  // GET /api/accounts/:id/campaigns
+  getAllCampaigns = async (
+    req: GetByIdRequest<IdParamDto, IntIdParamDto>,
+    res: Response,
+  ) => {
+    const { id } = req.validatedParams;
+    const result = await this.service.getCampaigns(id);
+    sendResponse(
+      res,
+      200,
+      result,
+      "All Campaigns by Account Id have been successfully retrieved.",
+    );
+  };
+
   // GET /api/accounts/:id/scores?days=7
   getScores = async (
     req: GetScoresRequest<IdParamDto, IntIdParamDto>,

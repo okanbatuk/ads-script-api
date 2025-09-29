@@ -16,6 +16,7 @@ import {
   type AccountScoresSchema,
   type IntIdParamDto,
   type IntBulkDto,
+  intIdParamSchema,
 } from "../schemas/index.js";
 import type {
   AccountScoresDto,
@@ -40,10 +41,25 @@ accountRouter.get(
   },
 );
 
+// GET /api/accounts/
+accountRouter.get("/", ctrl.getAll);
+
+// GET /api/accounts/:id/campaigns
+accountRouter.get(
+  "/:id/campaigns",
+  validateParams(intIdParamSchema),
+  async (req: any, res: Response) => {
+    await ctrl.getAllCampaigns(
+      req as GetByIdRequest<IdParamDto, IntIdParamDto>,
+      res,
+    );
+  },
+);
+
 /* GET /api/accounts/:id */
 accountRouter.get(
   "/:id",
-  validateParams(bigIntIdParamSchema),
+  validateParams(intIdParamSchema),
   async (req: any, res: Response) => {
     await ctrl.getById(req as GetByIdRequest<IdParamDto, IntIdParamDto>, res);
   },

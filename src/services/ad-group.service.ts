@@ -8,10 +8,14 @@ import {
   PrismaClient,
   Status,
 } from "../models/prisma.js";
-import { AdGroupMapper, AdGroupScoreMapper } from "../mappers/index.js";
+import {
+  AdGroupMapper,
+  AdGroupScoreMapper,
+  KeywordMapper,
+} from "../mappers/index.js";
 
 import type { IAdGroupService } from "../interfaces/index.js";
-import type { AdGroupDto, AdGroupScoreDto } from "../dtos/index.js";
+import type { AdGroupDto, AdGroupScoreDto, KeywordDto } from "../dtos/index.js";
 import type { AdGroupUpsertSchema } from "../schemas/index.js";
 
 @injectable()
@@ -32,6 +36,26 @@ export class AdGroupService implements IAdGroupService {
     });
     return Object.fromEntries(entries);
   };
+
+  async getAllKeywords(
+    adGroupId: bigint,
+    include: boolean = false,
+  ): Promise<{ keywords: KeywordDto[]; total: number }> {
+    const where: Prisma.KeywordWhereInput = {
+      adGroupId,
+    };
+    const [rows, total] = await Promise.all([
+      include
+        ? this.prisma.keyword.findMany({
+            where,
+            include: { scores: true },
+            orderBy: { keyword: "asc" },
+          })
+        : this.prisma.keyword.findMany({ where, orderBy: { keyword: "asc" } }),
+      this.prisma.keyword.count({ where }),
+    ]);
+    return { keywords: rows.map((r) => KeywordMapper.toDto(r)), total };
+  }
 
   async getAdGroupScores(
     adGroupId: bigint,

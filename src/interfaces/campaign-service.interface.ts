@@ -1,7 +1,14 @@
 import type { CampaignUpsertSchema } from "../schemas/campaign-upsert.schema.js";
-import type { CampaignDto, CampaignScoreDto } from "../dtos/index.js";
+import type {
+  AdGroupDto,
+  CampaignDto,
+  CampaignScoreDto,
+} from "../dtos/index.js";
 
 export interface ICampaignService {
+  getAdGroups(
+    campaignId: bigint,
+  ): Promise<{ adGroups: AdGroupDto[]; total: number }>;
   getCampaignScores(
     campaignId: bigint,
     days: number,
