@@ -11,6 +11,11 @@ export interface IAccountService {
     total: number;
   }>;
 
+  getAllChildren(
+    parentId: number,
+    include: boolean,
+  ): Promise<{ subAccounts: AccountDto[]; total: number }>;
+
   getCampaigns(
     accountId: number,
   ): Promise<{ campaigns: CampaignDto[]; total: number }>;

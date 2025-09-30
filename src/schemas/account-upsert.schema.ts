@@ -5,6 +5,7 @@ export const accountUpsertSchema = z
     accountId: z.string().min(1, "Account id cannot be null"),
     name: z.string().min(1, "Name can not be null"),
     status: z.string().min(1, "Status can not be null"),
+    parentId: z.coerce.number().optional(),
   })
   .readonly();
 

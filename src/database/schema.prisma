@@ -13,8 +13,11 @@ model Account {
   accountId String        @unique
   name      String
   status    AccountStatus
+  parentId  Int?
   campaigns Campaign[]
   scores    AccountScore[]
+  parent    Account?      @relation("AccountHierarchy", fields: [parentId], references: [id])
+  children  Account[]     @relation("AccountHierarchy")
 
   @@map("Account")
 }

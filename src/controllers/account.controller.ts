@@ -25,10 +25,22 @@ export class AccountController {
   ) {}
 
   // GET /api/accounts
-  getAll = async (req: Request, res: Response): Promise<void> => {
+  getAllParents = async (req: Request, res: Response): Promise<void> => {
+    const { include } = req.query;
+    const includeBool = !!include && (include === "true" || include === "1");
+    const result = await this.service.getAll(includeBool);
+    sendResponse(res, 200, result, "All parent accounts retrieved.");
+  };
+
+  // GET /api/accounts/:id/accounts
+  getAllChildren = async (
+    req: GetByIdRequest<IdParamDto, IntIdParamDto>,
+    res: Response,
+  ): Promise<void> => {
+    const { id } = req.validatedParams;
     const { include } = req.query;
     const includeBool = include === "true" || include === "1" ? true : false;
-    const result = await this.service.getAll(includeBool);
+    const result = await this.service.getAllChildren(id, includeBool);
     sendResponse(
       res,
       200,

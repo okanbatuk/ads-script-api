@@ -5,5 +5,7 @@ export type AccountDto = {
   readonly accountId: string;
   readonly name: string;
   readonly status: string;
-  readonly scores: AccountScoreDto[] | undefined;
+  readonly parentId?: number;
+  readonly children: AccountDto[];
+  readonly scores: AccountScoreDto[];
 };

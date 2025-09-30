@@ -42,7 +42,19 @@ accountRouter.get(
 );
 
 // GET /api/accounts/
-accountRouter.get("/", ctrl.getAll);
+accountRouter.get("/", ctrl.getAllParents);
+
+// GET /api/accounts/:id/accounts
+accountRouter.get(
+  "/:id/accounts",
+  validateParams(intIdParamSchema),
+  async (req: any, res: Response) => {
+    await ctrl.getAllChildren(
+      req as GetByIdRequest<IdParamDto, IntIdParamDto>,
+      res,
+    );
+  },
+);
 
 // GET /api/accounts/:id/campaigns
 accountRouter.get(

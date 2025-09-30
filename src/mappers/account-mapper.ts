@@ -5,7 +5,7 @@ import type { AccountDto } from "../dtos/index.js";
 
 type RowAccount =
   | Account
-  | Prisma.AccountGetPayload<{ include: { scores: true } }>;
+  | Prisma.AccountGetPayload<{ include: { scores: true; children: true } }>;
 
 export class AccountMapper {
   static toDto(row: RowAccount): AccountDto {
@@ -14,8 +14,9 @@ export class AccountMapper {
       accountId: row.accountId,
       name: row.name,
       status: row.status,
-      scores:
-        "scores" in row ? AccountScoreMapper.toDtos(row.scores) : undefined,
+      parentId: row.parentId ?? undefined,
+      children: "children" in row ? this.toDtos(row.children) : [],
+      scores: "scores" in row ? AccountScoreMapper.toDtos(row.scores) : [],
     };
   }
 

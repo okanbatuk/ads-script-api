@@ -42,18 +42,47 @@ export class AccountService implements IAccountService {
   };
 
   async getAll(
-    include: boolean = false,
+    include: boolean,
   ): Promise<{ accounts: AccountDto[]; total: number }> {
+    const where: Prisma.AccountWhereInput = {
+      parentId: null,
+    };
     const [rows, total] = await Promise.all([
-      include
-        ? this.prisma.account.findMany({
-            orderBy: { id: "asc" },
-            include: { scores: true },
-          })
-        : this.prisma.account.findMany({ orderBy: { id: "asc" } }),
-      this.prisma.account.count(),
+      this.prisma.account.findMany({
+        where,
+        orderBy: { name: "asc" },
+        include: {
+          ...(include && {
+            children: {
+              orderBy: { name: "asc" },
+            },
+          }),
+        },
+      }),
+      this.prisma.account.count({ where }),
     ]);
     return { accounts: AccountMapper.toDtos(rows), total };
+  }
+
+  async getAllChildren(
+    parentId: number,
+    include: boolean = false,
+  ): Promise<{ subAccounts: AccountDto[]; total: number }> {
+    const where: Prisma.AccountWhereInput = {
+      parentId,
+    };
+    const [rows, total] = await Promise.all([
+      this.prisma.account.findMany({
+        where,
+        orderBy: { id: "asc" },
+        include: {
+          children: { orderBy: { name: "asc" } },
+          ...(include && { scores: { orderBy: { date: "desc" } } }),
+        },
+      }),
+      this.prisma.account.count({ where }),
+    ]);
+    return { subAccounts: AccountMapper.toDtos(rows), total };
   }
 
   async getCampaigns(
@@ -105,16 +134,23 @@ export class AccountService implements IAccountService {
     return { scores: AccountScoreMapper.toDtos(rows), total };
   }
 
-  async getById(accountId: number): Promise<AccountDto | null> {
-    const raw = await this.prisma.account.findUnique({
-      where: { id: accountId },
+  async getById(accId: number): Promise<AccountDto | null> {
+    const where: Prisma.AccountWhereInput = {
+      id: accId,
+      NOT: { parentId: null },
+    };
+    const raw = await this.prisma.account.findFirst({
+      where,
     });
     return raw ? AccountMapper.toDto(raw) : null;
   }
 
   async getByAccountId(accountId: string): Promise<AccountDto | null> {
-    const row = await this.prisma.account.findUnique({
-      where: { accountId },
+    const where: Prisma.AccountWhereInput = {
+      accountId,
+    };
+    const row = await this.prisma.account.findFirst({
+      where,
     });
     return row ? AccountMapper.toDto(row) : null;
   }
@@ -126,7 +162,11 @@ export class AccountService implements IAccountService {
       for (const row of data) {
         await tx.account.upsert({
           where: { accountId: row.accountId },
-          update: { name: row.name, status: row.status },
+          update: {
+            name: row.name,
+            status: row.status,
+            parentId: row.parentId,
+          },
           create: row,
         });
       }
