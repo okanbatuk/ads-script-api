@@ -13,7 +13,7 @@ export const intIdParamSchema = z.object({
     .number()
     .int()
     .positive()
-    .refine((n) => n > 0n, {
+    .refine((n) => n > 0, {
       message: "Id must be a positive int",
     }),
 });
