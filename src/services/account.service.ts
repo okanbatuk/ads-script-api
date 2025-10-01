@@ -137,7 +137,6 @@ export class AccountService implements IAccountService {
   async getById(accId: number): Promise<AccountDto | null> {
     const where: Prisma.AccountWhereInput = {
       id: accId,
-      NOT: { parentId: null },
     };
     const raw = await this.prisma.account.findFirst({
       where,

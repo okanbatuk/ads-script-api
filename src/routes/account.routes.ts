@@ -8,7 +8,6 @@ import {
   validateQuery,
 } from "../middleware/index.js";
 import {
-  bigIntIdParamSchema,
   accountUpsertSchema,
   accountScoresSchema,
   bigIntBulkSchema,
@@ -31,7 +30,7 @@ const ctrl = container.get<AccountController>(TYPES.AccountController);
 /* GET /api/accounts/:id/scores?days=7 */
 accountRouter.get(
   "/:id/scores",
-  validateParams(bigIntIdParamSchema),
+  validateParams(intIdParamSchema),
   validateQuery,
   async (req: any, res: Response) => {
     await ctrl.getScores(
