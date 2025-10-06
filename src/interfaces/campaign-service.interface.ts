@@ -8,6 +8,7 @@ import type {
 export interface ICampaignService {
   getAdGroups(
     campaignId: bigint,
+    include: boolean,
   ): Promise<{ adGroups: AdGroupDto[]; total: number }>;
   getCampaignScores(
     campaignId: bigint,

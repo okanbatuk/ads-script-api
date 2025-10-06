@@ -30,7 +30,11 @@ export class CampaignController {
     res: Response,
   ): Promise<void> => {
     const { id } = req.validatedParams;
-    const result = await this.service.getAdGroups(id);
+    const { include } = req.query;
+    const result = await this.service.getAdGroups(
+      id,
+      include === "true" ? true : false,
+    );
     sendResponse(
       res,
       200,
