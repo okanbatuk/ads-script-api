@@ -60,33 +60,32 @@ export class AdGroupService implements IAdGroupService {
   async getAdGroupScores(
     adGroupId: bigint,
     days: number = 7,
-  ): Promise<{ scores: AdGroupScoreDto[]; total: number }> {
+  ): Promise<{ scores: AdGroupScoreDto[] }> {
     const where: Prisma.AdGroupScoreWhereInput = {
       adGroupId,
       date: { gte: startOfDay(subDays(new Date(), days)) },
     };
+    const rows = await this.prisma.adGroupScore.findMany({
+      where,
+      orderBy: { date: "desc" },
+    });
 
-    const [rows, total] = await Promise.all([
-      this.prisma.adGroupScore.findMany({ where, orderBy: { date: "desc" } }),
-      this.prisma.adGroupScore.count({ where }),
-    ]);
-
-    return { scores: AdGroupScoreMapper.toDtos(rows), total };
+    return { scores: AdGroupScoreMapper.toDtos(rows) };
   }
 
   async getBulkAdGroupScores(
     adGroupIds: bigint[],
     days: number = 7,
-  ): Promise<{ scores: AdGroupScoreDto[]; total: number }> {
+  ): Promise<{ scores: AdGroupScoreDto[] }> {
     const where: Prisma.AdGroupScoreWhereInput = {
       adGroupId: { in: adGroupIds },
       date: { gte: startOfDay(subDays(new Date(), days)) },
     };
-    const [rows, total] = await Promise.all([
-      this.prisma.adGroupScore.findMany({ where, orderBy: { date: "desc" } }),
-      this.prisma.adGroupScore.count({ where }),
-    ]);
-    return { scores: AdGroupScoreMapper.toDtos(rows), total };
+    const rows = await this.prisma.adGroupScore.findMany({
+      where,
+      orderBy: { date: "desc" },
+    });
+    return { scores: AdGroupScoreMapper.toDtos(rows) };
   }
 
   async getById(adGroupId: bigint): Promise<AdGroupDto | null> {

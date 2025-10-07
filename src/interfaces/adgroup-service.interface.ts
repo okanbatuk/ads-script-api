@@ -11,7 +11,6 @@ export interface IAdGroupService {
     days: number,
   ): Promise<{
     scores: AdGroupScoreDto[];
-    total: number;
   }>;
 
   getBulkAdGroupScores(
@@ -19,7 +18,6 @@ export interface IAdGroupService {
     days: number,
   ): Promise<{
     scores: AdGroupScoreDto[];
-    total: number;
   }>;
 
   getById(adGroupId: bigint): Promise<AdGroupDto | null>;
