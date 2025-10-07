@@ -13,6 +13,7 @@ export class KeywordMapper {
       id: row.id,
       criterionId: row.criterionId.toString(),
       keyword: row.keyword,
+      status: row.status,
       adGroupId: row.adGroupId.toString(),
       scores:
         "scores" in row ? KeywordScoreMapper.toDtos(row.scores) : undefined,
