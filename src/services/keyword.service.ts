@@ -5,6 +5,7 @@ import { Keyword, Prisma, PrismaClient, Status } from "../models/prisma.js";
 import { KeywordMapper, KeywordScoreMapper } from "../mappers/index.js";
 
 import type {
+  KeywordBulkSchema,
   KeywordSetScoreSchema,
   KeywordUpsertSchema,
 } from "../schemas/index.js";
@@ -30,6 +31,20 @@ export class KeywordService implements IKeywordService {
     });
     return Object.fromEntries(entries);
   };
+
+  async getKeywordIds(pairs: KeywordBulkSchema): Promise<KeywordDto[]> {
+    const where: Prisma.KeywordWhereInput = {
+      OR: pairs.map((p) => ({
+        criterionId: p.criterionId,
+        adGroupId: p.adGroupId,
+      })),
+    };
+    const rows = await this.prisma.keyword.findMany({
+      where,
+      include: { adGroup: true },
+    });
+    return rows.map((r) => KeywordMapper.toDto(r));
+  }
 
   async getKeywordScores(
     id: number,

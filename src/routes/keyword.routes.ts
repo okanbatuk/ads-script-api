@@ -6,13 +6,15 @@ import {
 } from "../middleware/index.js";
 import {
   intIdParamSchema,
+  intBulkSchema,
   keywordUpsertSchema,
   keywordScoresSchema,
-  intBulkSchema,
+  keywordBulkDtoSchema,
   type IntIdParamDto,
   type IntBulkDto,
   type KeywordUpsertSchema,
   type KeywordSetScoreSchema,
+  type KeywordBulkSchema,
 } from "../schemas/index.js";
 import { TYPES } from "../types/index.js";
 import { container } from "../container/container.js";
@@ -20,6 +22,7 @@ import { KeywordController } from "../controllers/index.js";
 import type {
   IdBulkDto,
   IdParamDto,
+  KeywordBulkDto,
   KeywordScoresDto,
   KeywordUpsertDto,
 } from "../dtos/index.js";
@@ -53,6 +56,19 @@ keywordRouter
     async (req: any, res: Response) => {
       await ctrl.upsert(
         req as UpsertRequest<KeywordUpsertDto[], KeywordUpsertSchema[]>,
+        res,
+      );
+    },
+  )
+  .post(
+    "/ids",
+    validateBody(keywordBulkDtoSchema),
+    async (req: any, res: Response) => {
+      await ctrl.getIds(
+        req as GetBulkRequest<
+          { pairs: KeywordBulkDto[] },
+          { pairs: KeywordBulkSchema }
+        >,
         res,
       );
     },

@@ -7,12 +7,18 @@ import { ApiError } from "../errors/api.error.js";
 import type {
   IntBulkDto,
   IntIdParamDto,
+  KeywordBulkSchema,
   KeywordSetScoreSchema,
   KeywordUpsertSchema,
 } from "../schemas/index.js";
-import type { IdBulkDto, IdParamDto, KeywordUpsertDto } from "../dtos/index.js";
+import type {
+  IdBulkDto,
+  IdParamDto,
+  KeywordBulkDto,
+  KeywordScoresDto,
+  KeywordUpsertDto,
+} from "../dtos/index.js";
 import type { IKeywordService } from "../interfaces/index.js";
-import { KeywordScoresDto } from "src/dtos/keyword-scores.dto.js";
 
 @injectable()
 export class KeywordController {
@@ -73,6 +79,19 @@ export class KeywordController {
     const scores = req.validatedBody;
     await this.service.setKeywordScores(scores);
     sendResponse(res, 204, null, "Keywords scores set successfully.");
+  };
+
+  // POST /api/keywords/ids
+  getIds = async (
+    req: GetBulkRequest<
+      { pairs: KeywordBulkDto[] },
+      { pairs: KeywordBulkSchema }
+    >,
+    res: Response,
+  ): Promise<void> => {
+    const { pairs } = req.validatedBody;
+    const result = await this.service.getKeywordIds(pairs);
+    sendResponse(res, 200, result, "All IDs retrieved successfully.");
   };
 
   // POST /api/keywords/bulkscores?days=7

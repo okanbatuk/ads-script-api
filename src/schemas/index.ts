@@ -10,6 +10,7 @@ export * from "./global-score-date.schema.js";
 
 export * from "./int-bulk.schema.js";
 export * from "./bigint-bulk.schema.js";
+export * from "./keyword-bulk.schema.js";
 
 export * from "./account-scores.schema.js";
 export * from "./campaign-scores.schema.js";

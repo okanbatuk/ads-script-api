@@ -22,6 +22,14 @@ declare global {
   type SetScoresRequest<TBody, TParse> = Request<unknown, unknown, TBody> & {
     validatedBody: TParse;
   };
+  type GetBulkRequest<TBody, TParse> = Request<
+    unknown,
+    unknown,
+    TBody,
+    unknown
+  > & {
+    validatedBody: TParse;
+  };
   type GetBulkScoresRequest<TBody, TParse> = Request<
     unknown,
     unknown,

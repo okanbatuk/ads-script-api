@@ -21,4 +21,5 @@ export * from "./keyword-scores.dto.js";
 
 export * from "./id-param.dto.js";
 export * from "./bulk-body.dto.js";
+export * from "./keyword-bulk.dto.js";
 export * from "./global-score-date.dto.js";
