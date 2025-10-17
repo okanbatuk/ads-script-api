@@ -12,4 +12,5 @@ export const keywordBulkDtoSchema = z
   })
   .strict();
 
+export type KeywordPairSchema = z.infer<typeof keywordPairSchema>;
 export type KeywordBulkSchema = z.infer<typeof keywordBulkDtoSchema>;

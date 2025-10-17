@@ -1,12 +1,9 @@
-import type { KeywordUpsertSchema } from "../schemas/keyword-upsert.schema.js";
+import type { KeywordSetScoreSchema } from "../schemas/index.js";
 import type { KeywordDto, KeywordScoreDto } from "../dtos/index.js";
-import type {
-  KeywordBulkSchema,
-  KeywordSetScoreSchema,
-} from "../schemas/index.js";
+import type { KeywordUpsertSchema } from "../schemas/keyword-upsert.schema.js";
 
 export interface IKeywordService {
-  getKeywordIds(pairs: KeywordBulkSchema): Promise<KeywordDto[]>;
+  // getKeywordIds(pairs: KeywordPairSchema[]): Promise<KeywordDto[]>;
 
   getKeywordScores(
     id: number,

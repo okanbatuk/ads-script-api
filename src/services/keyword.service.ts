@@ -1,17 +1,16 @@
 import { inject, injectable } from "inversify";
 import { startOfDay, subDays } from "date-fns";
 import { TYPES } from "../types/index.js";
-import { Keyword, Prisma, PrismaClient, Status } from "../models/prisma.js";
+import { ApiError } from "../errors/api.error.js";
 import { KeywordMapper, KeywordScoreMapper } from "../mappers/index.js";
+import { Keyword, Prisma, PrismaClient, Status } from "../models/prisma.js";
 
 import type {
-  KeywordBulkSchema,
   KeywordSetScoreSchema,
   KeywordUpsertSchema,
 } from "../schemas/index.js";
 import type { IKeywordService } from "../interfaces/index.js";
 import type { KeywordDto, KeywordScoreDto } from "../dtos/index.js";
-import { ApiError } from "src/errors/api.error.js";
 
 @injectable()
 export class KeywordService implements IKeywordService {
@@ -32,19 +31,19 @@ export class KeywordService implements IKeywordService {
     return Object.fromEntries(entries);
   };
 
-  async getKeywordIds(pairs: KeywordBulkSchema): Promise<KeywordDto[]> {
-    const where: Prisma.KeywordWhereInput = {
-      OR: pairs.map((p) => ({
-        criterionId: p.criterionId,
-        adGroupId: p.adGroupId,
-      })),
-    };
-    const rows = await this.prisma.keyword.findMany({
-      where,
-      include: { adGroup: true },
-    });
-    return rows.map((r) => KeywordMapper.toDto(r));
-  }
+  // async getKeywordIds(pairs: KeywordPairSchema[]): Promise<KeywordDto[]> {
+  //   const where: Prisma.KeywordWhereInput = {
+  //     OR: pairs.map((p: any) => ({
+  //       criterionId: p.criterionId,
+  //       adGroupId: p.adGroupId,
+  //     })),
+  //   };
+  //   const rows = await this.prisma.keyword.findMany({
+  //     where,
+  //     include: { adGroup: true },
+  //   });
+  //   return rows.map((r) => KeywordMapper.toDto(r));
+  // }
 
   async getKeywordScores(
     id: number,
