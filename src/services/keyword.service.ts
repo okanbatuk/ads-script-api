@@ -124,10 +124,20 @@ export class KeywordService implements IKeywordService {
       });
 
       if (!keyword)
-        throw new ApiError(`There is a keyword that has not been upserted.`);
+        throw new ApiError(
+          `Keyword not found in DB: ${s.keywordId}-${s.adGroupId}`,
+          404,
+        );
 
-      await this.prisma.keywordScore.create({
-        data: {
+      await this.prisma.keywordScore.upsert({
+        where: {
+          keywordId_date: {
+            keywordId: keyword.id,
+            date: s.date,
+          },
+        },
+        update: { qs: s.qs },
+        create: {
           keywordId: keyword.id,
           date: s.date,
           qs: s.qs,
