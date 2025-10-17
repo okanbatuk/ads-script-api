@@ -18,7 +18,7 @@ export const errorHandler = (
     message = err.message;
   } else if (err instanceof ZodError) {
     statusCode = 400;
-    message: `Validation failed.`;
+    message = `Validation failed.`;
   } else if (err instanceof Error) {
     message = err.message;
   }
