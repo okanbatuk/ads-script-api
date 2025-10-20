@@ -14,9 +14,13 @@ export class GlobalScoreService implements IGlobalScoreService {
   constructor(
     @inject(TYPES.PrismaClient) private readonly prisma: PrismaClient,
   ) {}
-  async getGlobalTrend(days: number = 7): Promise<GlobalScoreDto[]> {
+  async getGlobalTrend(
+    mccId: number,
+    days: number = 7,
+  ): Promise<GlobalScoreDto[]> {
     const rows = await this.prisma.globalScore.findMany({
       where: {
+        mccId,
         date: { gte: startOfDay(subDays(new Date(), days)) },
       },
     });
@@ -24,29 +28,26 @@ export class GlobalScoreService implements IGlobalScoreService {
     return GlobalScoreMapper.toDtos(rows);
   }
 
-  async setGlobalScore(date: Date): Promise<void> {
-    const rows = await this.prisma.$queryRaw<
-      {
-        qs: number;
-        accountCount: number;
-      }[]
-    >`
-      SELECT
-        ROUND(AVG(qs::float), 2) AS qs,
-        COUNT(*)                 AS "accountCount"
-      FROM account_score
-      WHERE date = ${date}::date`;
-
-    if (!rows.length || rows[0].accountCount === 0)
-      throw new ApiError(`No account_score data for date: ${formatDate(date)}`);
-
-    const qs = Number(rows[0].qs);
-    const accountCount = Number(rows[0].accountCount);
-
-    await this.prisma.globalScore.upsert({
-      where: { date },
-      update: { qs, accountCount },
-      create: { date, qs, accountCount },
+  async setGlobalScore(mccId: number, date: Date): Promise<void> {
+    const scores = await this.prisma.accountScore.findMany({
+      where: { account: { parentId: mccId }, date },
+      select: { qs: true },
     });
+
+    if (scores.length === 0) return;
+    const qsAvg = scores.reduce((s, c) => s + c.qs, 0) / scores.length;
+
+    await this.prisma.$executeRaw`
+      INSERT INTO "GlobalScore" ("mccId", "date", "qs", "accountCount")
+      VALUES (
+        ${mccId}::int,
+        ${date}::date,
+        ${qsAvg}::double precision,
+        ${scores.length}::int
+      )
+      ON CONFLICT ("mccId", "date")
+      DO UPDATE
+         SET "qs"           = EXCLUDED."qs",
+             "accountCount" = EXCLUDED."accountCount"`;
   }
 }

@@ -4,8 +4,9 @@ import { TYPES } from "../types/index.js";
 import { sendResponse } from "../utils/index.js";
 
 import type { IGlobalScoreService } from "../interfaces/index.js";
-import type { ScoreDateDto } from "../dtos/index.js";
+import type { IdParamDto, ScoreDateDto } from "../dtos/index.js";
 import type { ScoreDateSchema } from "../schemas/global-score-date.schema.js";
+import { IntIdParamDto } from "src/schemas/id-param.schema.js";
 
 @injectable()
 export class GlobalScoreController {
@@ -14,13 +15,14 @@ export class GlobalScoreController {
     private readonly service: IGlobalScoreService,
   ) {}
 
-  // GET /api/global?days=7
+  // GET /api/global/:id?days=7
   public getGlobalTrend = async (
-    req: GetGlobalTrend,
+    req: GetScoresRequest<IdParamDto, IntIdParamDto>,
     res: Response,
   ): Promise<void> => {
+    const { id } = req.validatedParams;
     const { days } = req.validatedQuery;
-    const result = await this.service.getGlobalTrend(days);
+    const result = await this.service.getGlobalTrend(id, days);
     sendResponse(
       res,
       200,
@@ -35,9 +37,8 @@ export class GlobalScoreController {
     res: Response,
   ): Promise<void> => {
     console.log(`Set Global Score /api/global`);
-    const { date } = req.validatedBody;
-    const dateObj = new Date(date);
-    await this.service.setGlobalScore(dateObj);
+    const { mccId, date } = req.validatedBody;
+    await this.service.setGlobalScore(mccId, date);
     sendResponse(res, 204, null, "Global score set successfully.");
   };
 }

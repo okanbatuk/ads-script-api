@@ -1,18 +1,35 @@
 import { Response, Router } from "express";
 import { TYPES } from "../types/index.js";
 import { container } from "../container/container.js";
-import type { ScoreDateDto } from "../dtos/index.js";
+import type { IdParamDto, ScoreDateDto } from "../dtos/index.js";
 import { GlobalScoreController } from "../controllers/index.js";
-import { validateBody, validateQuery } from "../middleware/index.js";
-import { type ScoreDateSchema, scoreDateSchema } from "../schemas/index.js";
+import {
+  validateBody,
+  validateParams,
+  validateQuery,
+} from "../middleware/index.js";
+import {
+  type ScoreDateSchema,
+  scoreDateSchema,
+  type IntIdParamDto,
+  intIdParamSchema,
+} from "../schemas/index.js";
 
 export const globalScoreRouter = Router();
 const ctrl = container.get<GlobalScoreController>(TYPES.GlobalScoreController);
 
-/* GET /api/global?days=7 */
-globalScoreRouter.get("/", validateQuery, async (req: any, res: Response) => {
-  await ctrl.getGlobalTrend(req as GetGlobalTrend, res);
-});
+/* GET /api/global/:id?days=7 */
+globalScoreRouter.get(
+  "/:id",
+  validateQuery,
+  validateParams(intIdParamSchema),
+  async (req: any, res: Response) => {
+    await ctrl.getGlobalTrend(
+      req as GetScoresRequest<IdParamDto, IntIdParamDto>,
+      res,
+    );
+  },
+);
 
 /* POST /api/global */
 globalScoreRouter.post(

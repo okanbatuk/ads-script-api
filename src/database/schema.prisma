@@ -9,15 +9,16 @@ datasource db {
 }
 
 model Account {
-  id        Int           @id @default(autoincrement())
-  accountId String        @unique
-  name      String
-  status    AccountStatus
-  parentId  Int?
-  campaigns Campaign[]
-  scores    AccountScore[]
-  parent    Account?      @relation("AccountHierarchy", fields: [parentId], references: [id])
-  children  Account[]     @relation("AccountHierarchy")
+  id            Int           @id @default(autoincrement())
+  accountId     String        @unique
+  name          String
+  status        AccountStatus
+  parentId      Int?
+  campaigns     Campaign[]
+  scores        AccountScore[]
+  globalScores  GlobalScore[]
+  parent        Account?      @relation("AccountHierarchy", fields: [parentId], references: [id])
+  children      Account[]     @relation("AccountHierarchy")
 
   @@map("Account")
 }
@@ -112,10 +113,14 @@ model AccountScore {
 
 model GlobalScore {
   id            Int      @id @default(autoincrement())
+  mccId         Int
   date          DateTime @db.Date @unique
   qs            Float
   accountCount  Int
+  mcc           Account  @relation(fields: [mccId], references: [id], onDelete: Cascade)
 
+  @@unique([mccId, date])
+  @@index([date])
   @@map("GlobalScore")
 }
 
