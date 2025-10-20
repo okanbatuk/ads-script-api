@@ -1,4 +1,4 @@
-import { KeywordScoreDto } from "./keyword-score.dto";
+import type { KeywordScoreDto } from "./keyword-score.dto";
 
 export type KeywordDto = {
   readonly id: number;

@@ -37,7 +37,7 @@ export class KeywordController {
       res,
       200,
       result,
-      `All score records for Keyword ID: ${req.params.id} on ${req.query.days} days have been successfully retrieved.`,
+      `All score records for Keyword ID: ${req.params.id} on ${days} days have been successfully retrieved.`,
     );
   };
 
