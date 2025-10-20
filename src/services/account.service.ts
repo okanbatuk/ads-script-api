@@ -212,18 +212,17 @@ export class AccountService implements IAccountService {
       const counts = data.map((d) => d.campaignCount);
 
       await this.prisma.$executeRaw`
-        INSERT INTO account_score (account_id, date, qs, campaign_count)
-        SELECT t.account_id, t.date, t.qs, t.campaign_count
-        FROM UNNEST(
-          ${accountIds}::number[],
+        INSERT INTO "AccountScore" ("accountId", "date", "qs", "campaignCount")
+        SELECT * FROM UNNEST(
+          ${accountIds}::bigint[],
           ${dates}::date[],
-          ${qsArr}::float[],
+          ${qsArr}::double precision[],
           ${counts}::int[]
-        ) AS t(account_id, date, qs, campaign_count)
-        ON CONFLICT (account_id, date)
-        DO UPDATE SET
-          qs = EXCLUDED.qs,
-          campaign_count = EXCLUDED.campaign_count`;
+        ) AS t("accountId", "date", "qs", "campaignCount")
+        ON CONFLICT ("accountId", "date")
+        DO UPDATE
+           SET "qs"            = EXCLUDED."qs",
+               "campaignCount" = EXCLUDED."campaignCount"`;
     }
   }
 }

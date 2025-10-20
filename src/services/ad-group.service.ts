@@ -152,17 +152,18 @@ export class AdGroupService implements IAdGroupService {
       const counts = data.map((d) => d.keywordCount);
 
       await this.prisma.$executeRaw`
-        INSERT INTO ad_group_score (ad_group_id, date, qs, keyword_count)
-        SELECT * FROM UNNEST(
+        INSERT INTO "AdGroupScore" ("adGroupId", "date", "qs", "keywordCount")
+        SELECT *
+        FROM UNNEST(
           ${adGroupIds}::bigint[],
           ${dates}::date[],
-          ${qsArr}::float[],
+          ${qsArr}::double precision[],
           ${counts}::int[]
-        ) AS t(ad_group_id, date, qs, keyword_count)
-        ON CONFLICT (ad_group_id, date)
-        DO UPDATE SET
-          qs = EXCLUDED.qs,
-          keyword_count = EXCLUDED.keyword_count`;
+        ) AS t("adGroupId", "date", "qs", "keywordCount")
+        ON CONFLICT ("adGroupId", "date")
+        DO UPDATE
+           SET "qs"         = EXCLUDED."qs",
+               "keywordCount" = EXCLUDED."keywordCount";`;
     }
   }
 }

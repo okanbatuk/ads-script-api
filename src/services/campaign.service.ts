@@ -164,17 +164,17 @@ export class CampaignService implements ICampaignService {
       const counts = data.map((d) => d.adGroupCount);
 
       await this.prisma.$executeRaw`
-        INSERT INTO campaign_score (campaign_id, date, qs, ad_group_count)
+        INSERT INTO "CampaignScore" ("campaignId", "date", "qs", "adGroupCount")
         SELECT * FROM UNNEST(
           ${campaignIds}::bigint[],
           ${dates}::date[],
-          ${qsArr}::float[],
+          ${qsArr}::double precision[],
           ${counts}::int[]
-        ) AS t(campaign_id, date, qs, ad_group_count)
-        ON CONFLICT (campaign_id, date)
-        DO UPDATE SET
-          qs = EXCLUDED.qs,
-          ad_group_count = EXCLUDED.ad_group_count`;
+        ) AS t("campaignId", "date", "qs", "adGroupCount")
+        ON CONFLICT ("campaignId", "date")
+        DO UPDATE
+           SET "qs"          = EXCLUDED."qs",
+               "adGroupCount" = EXCLUDED."adGroupCount"`;
     }
   }
 }
