@@ -174,7 +174,7 @@ export class AccountService implements IAccountService {
 
   async setAccountScores(accountIds: number[], date: Date): Promise<void> {
     const rows = await this.prisma.campaign.findMany({
-      where: { id: { in: accountIds } },
+      where: { accountId: { in: accountIds } },
       include: {
         scores: {
           where: { date },
@@ -186,7 +186,7 @@ export class AccountService implements IAccountService {
     const map = new Map<number, { qsSum: number; count: number }>();
 
     for (let c of rows) {
-      if (c.scores.length === 0) continue;
+      // if (c.scores.length === 0) continue;
       const key = c.accountId;
       const curr = map.get(key) ?? { qsSum: 0, count: 0 };
       for (let sc of c.scores) {
