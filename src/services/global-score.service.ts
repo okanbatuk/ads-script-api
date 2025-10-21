@@ -34,7 +34,8 @@ export class GlobalScoreService implements IGlobalScoreService {
       select: { qs: true },
     });
 
-    if (scores.length === 0) return;
+    if (scores.length === 0)
+      throw new ApiError(`There is no scores for this ${mccId} MCC`, 404);
     const qsAvg = scores.reduce((s, c) => s + c.qs, 0) / scores.length;
 
     await this.prisma.$executeRaw`
