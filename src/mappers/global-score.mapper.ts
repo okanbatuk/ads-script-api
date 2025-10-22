@@ -8,6 +8,7 @@ export class GlobalScoreMapper {
     return {
       id: row.id,
       qs: row.qs,
+      mccId: row.mccId,
       date: formatDate(row.date),
       accountCount: row.accountCount,
     };
