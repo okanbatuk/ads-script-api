@@ -18,6 +18,7 @@ export interface IAccountService {
 
   getCampaigns(
     accountId: number,
+    include: boolean,
   ): Promise<{ campaigns: CampaignDto[]; total: number }>;
 
   getAccountScores(

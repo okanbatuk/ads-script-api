@@ -87,10 +87,12 @@ export class AccountService implements IAccountService {
 
   async getCampaigns(
     accountId: number,
+    include: boolean,
   ): Promise<{ campaigns: CampaignDto[]; total: number }> {
     const [rows, total] = await Promise.all([
       this.prisma.campaign.findMany({
         where: { accountId },
+        include: { scores: include },
         orderBy: { name: "asc" },
       }),
       this.prisma.campaign.count({

@@ -55,7 +55,11 @@ export class AccountController {
     res: Response,
   ) => {
     const { id } = req.validatedParams;
-    const result = await this.service.getCampaigns(id);
+    const { include } = req.query;
+    const result = await this.service.getCampaigns(
+      id,
+      include === "true" ? true : false,
+    );
     sendResponse(
       res,
       200,
