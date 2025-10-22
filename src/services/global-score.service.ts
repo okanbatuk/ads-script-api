@@ -17,7 +17,7 @@ export class GlobalScoreService implements IGlobalScoreService {
   async getGlobalTrend(
     mccId: number,
     days: number = 7,
-  ): Promise<GlobalScoreDto[]> {
+  ): Promise<{ scores: GlobalScoreDto[] }> {
     const rows = await this.prisma.globalScore.findMany({
       where: {
         mccId,
@@ -25,7 +25,7 @@ export class GlobalScoreService implements IGlobalScoreService {
       },
     });
 
-    return GlobalScoreMapper.toDtos(rows);
+    return { scores: GlobalScoreMapper.toDtos(rows) };
   }
 
   async setGlobalScore(mccId: number, date: Date): Promise<void> {
