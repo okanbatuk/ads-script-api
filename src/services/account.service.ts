@@ -21,6 +21,7 @@ import type {
   AccountScoreDto,
   CampaignDto,
 } from "../dtos/index.js";
+import { ApiError } from "src/errors/api.error.js";
 
 @injectable()
 export class AccountService implements IAccountService {
@@ -70,6 +71,7 @@ export class AccountService implements IAccountService {
   ): Promise<{ subAccounts: AccountDto[]; total: number }> {
     const where: Prisma.AccountWhereInput = {
       parentId,
+      type: true,
     };
     const [rows, total] = await Promise.all([
       this.prisma.account.findMany({
@@ -89,6 +91,14 @@ export class AccountService implements IAccountService {
     accountId: number,
     include: boolean,
   ): Promise<{ campaigns: CampaignDto[]; total: number }> {
+    const acc = await this.prisma.account.findFirst({
+      where: { id: accountId },
+      select: { type: true },
+    });
+    if (!acc || !acc.type)
+      throw new ApiError(
+        `There is No Customer Account with this ${accountId} ID.`,
+      );
     const [rows, total] = await Promise.all([
       this.prisma.campaign.findMany({
         where: { accountId },

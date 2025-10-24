@@ -6,7 +6,7 @@ import { sendResponse } from "../utils/index.js";
 import type { IGlobalScoreService } from "../interfaces/index.js";
 import type { IdParamDto, ScoreDateDto } from "../dtos/index.js";
 import type { ScoreDateSchema } from "../schemas/global-score-date.schema.js";
-import { IntIdParamDto } from "src/schemas/id-param.schema.js";
+import type { IntIdParamDto } from "../schemas/id-param.schema.js";
 
 @injectable()
 export class GlobalScoreController {

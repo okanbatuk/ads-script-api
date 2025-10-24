@@ -13,6 +13,7 @@ export class AccountMapper {
       id: row.id.toString(),
       accountId: row.accountId,
       name: row.name,
+      type: row.type,
       status: row.status,
       parentId: row.parentId ?? undefined,
       children: "children" in row ? this.toDtos(row.children) : [],
